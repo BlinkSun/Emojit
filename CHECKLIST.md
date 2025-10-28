@@ -2,7 +2,7 @@
 
 ## ✅ Étape 0 — Bootstrap de la solution (dotnet CLI)
 - [x] Installer/valider .NET 8 SDK (`dotnet --info`)
-- [ ] Créer le dossier racine : `mkdir Emojit && cd Emojit`
+- [x] Créer le dossier racine : `mkdir Emojit && cd Emojit`
 - [ ] Créer la solution : `dotnet new sln -n EmojitServer`
 - [ ] Créer les projets :
   - [ ] `dotnet new webapi -n EmojitServer.Api`
