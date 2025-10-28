@@ -1,0 +1,6 @@
+@EmojitServer.Api_HostAddress = http://localhost:5139
+
+GET {{EmojitServer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
