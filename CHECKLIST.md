@@ -3,20 +3,20 @@
 ## ✅ Étape 0 — Bootstrap de la solution (dotnet CLI)
 - [x] Installer/valider .NET 8 SDK (`dotnet --info`)
 - [x] Créer le dossier racine : `mkdir Emojit && cd Emojit`
-- [ ] Créer la solution : `dotnet new sln -n EmojitServer`
-- [ ] Créer les projets :
-  - [ ] `dotnet new webapi -n EmojitServer.Api`
-  - [ ] `dotnet new classlib -n EmojitServer.Domain`
-  - [ ] `dotnet new classlib -n EmojitServer.Core`
-  - [ ] `dotnet new classlib -n EmojitServer.Application`
-  - [ ] `dotnet new classlib -n EmojitServer.Infrastructure`
-  - [ ] `dotnet new classlib -n EmojitServer.Common`
-  - [ ] `dotnet new xunit -n EmojitServer.Tests`
-- [ ] Ajouter les projets à la solution
-- [ ] Définir les références/dépendances
-- [ ] Structurer les dossiers internes
-- [ ] Ajouter packages NuGet
-- [ ] Commit initial `git init && git add . && git commit -m "chore: bootstrap solution"`
+- [x] Créer la solution : `dotnet new sln -n EmojitServer`
+- [x] Créer les projets :
+- [x] `dotnet new webapi -n EmojitServer.Api`
+- [x] `dotnet new classlib -n EmojitServer.Domain`
+- [x] `dotnet new classlib -n EmojitServer.Core`
+- [x] `dotnet new classlib -n EmojitServer.Application`
+- [x] `dotnet new classlib -n EmojitServer.Infrastructure`
+- [x] `dotnet new classlib -n EmojitServer.Common`
+- [x] `dotnet new xunit -n EmojitServer.Tests`
+- [x] Ajouter les projets à la solution
+- [x] Définir les références/dépendances
+- [x] Structurer les dossiers internes
+- [x] Ajouter packages NuGet
+- [x] Commit initial `git init && git add . && git commit -m "chore: bootstrap solution"`
 
 ## ✅ Étape 1 — Domain (entités / invariants)
 - [ ] Créer entités :
