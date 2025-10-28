@@ -1,7 +1,7 @@
 # Emojit Server Development Checklist
 
 ## ✅ Étape 0 — Bootstrap de la solution (dotnet CLI)
-- [ ] Installer/valider .NET 8 SDK (`dotnet --info`)
+- [x] Installer/valider .NET 8 SDK (`dotnet --info`)
 - [ ] Créer le dossier racine : `mkdir Emojit && cd Emojit`
 - [ ] Créer la solution : `dotnet new sln -n EmojitServer`
 - [ ] Créer les projets :
