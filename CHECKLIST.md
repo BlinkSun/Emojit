@@ -40,7 +40,7 @@
 - [x] Exceptions & XML docs
 
 ## ✅ Étape 3 — Infrastructure (EF Core + Repos)
-- [ ] Créer EmojitDbContext + DbSet<>
+- [x] Créer EmojitDbContext + DbSet<>
 - [ ] Configurer OnModelCreating
 - [ ] Créer Repositories :
   - [ ] IPlayerRepository
