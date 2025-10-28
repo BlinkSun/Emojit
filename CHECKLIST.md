@@ -34,10 +34,10 @@
 - [x] Implémenter EmojitDesign (équivalent SpotItDesign)
 - [x] Ajouter GetCard, FindCommonSymbol, Validate, GetStats
 - [x] Définir interface IGameMode
-- [ ] Implémenter TowerGameManager
-- [ ] Mélange deck / avancement rounds / scoring
-- [ ] Gestion MaxRounds configurable
-- [ ] Exceptions & XML docs
+- [x] Implémenter TowerGameManager
+- [x] Mélange deck / avancement rounds / scoring
+- [x] Gestion MaxRounds configurable
+- [x] Exceptions & XML docs
 
 ## ✅ Étape 3 — Infrastructure (EF Core + Repos)
 - [ ] Créer EmojitDbContext + DbSet<>
