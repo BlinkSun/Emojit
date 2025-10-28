@@ -19,16 +19,16 @@
 - [x] Commit initial `git init && git add . && git commit -m "chore: bootstrap solution"`
 
 ## ✅ Étape 1 — Domain (entités / invariants)
-- [ ] Créer entités :
-  - [ ] Player
-  - [ ] GameSession
-  - [ ] RoundLog
-  - [ ] LeaderboardEntry
-- [ ] Créer Value Objects / enums :
-  - [ ] GameMode enum (Tower, Well)
-  - [ ] GameId, PlayerId (optionnel)
-- [ ] Ajouter règles d’intégrité
-- [ ] Ajouter XML docs & noms significatifs
+- [x] Créer entités :
+  - [x] Player
+  - [x] GameSession
+  - [x] RoundLog
+  - [x] LeaderboardEntry
+- [x] Créer Value Objects / enums :
+  - [x] GameMode enum (Tower, Well)
+  - [x] GameId, PlayerId (optionnel)
+- [x] Ajouter règles d’intégrité
+- [x] Ajouter XML docs & noms significatifs
 
 ## ✅ Étape 2 — Core (moteur design & gameplay)
 - [ ] Implémenter EmojitDesign (équivalent SpotItDesign)
