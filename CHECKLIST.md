@@ -31,8 +31,8 @@
 - [x] Ajouter XML docs & noms significatifs
 
 ## ✅ Étape 2 — Core (moteur design & gameplay)
-- [ ] Implémenter EmojitDesign (équivalent SpotItDesign)
-- [ ] Ajouter GetCard, FindCommonSymbol, Validate, GetStats
+- [x] Implémenter EmojitDesign (équivalent SpotItDesign)
+- [x] Ajouter GetCard, FindCommonSymbol, Validate, GetStats
 - [ ] Définir interface IGameMode
 - [ ] Implémenter TowerGameManager
 - [ ] Mélange deck / avancement rounds / scoring
