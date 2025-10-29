@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EmojitServer.Api.Models.Realtime;
 using EmojitServer.Application.Abstractions.Services;
+using EmojitServer.Application.Contracts.Realtime;
 using EmojitServer.Application.Services.Models;
 using EmojitServer.Core.GameModes;
 using EmojitServer.Domain.Entities;
@@ -12,6 +11,7 @@ using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Mapster;
 
 namespace EmojitServer.Api.Hubs;
 
@@ -62,7 +62,7 @@ public sealed class GameHub : Hub
                 Context.ConnectionId,
                 session.Mode);
 
-            return new GameCreatedResponse(session.Id.Value.ToString(), session.Mode, session.MaxPlayers, session.MaxRounds);
+            return session.Adapt<GameCreatedResponse>();
         }
         catch (ArgumentException ex)
         {
@@ -144,7 +144,7 @@ public sealed class GameHub : Hub
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName).ConfigureAwait(false);
 
-            RoundStartEvent startEvent = CreateRoundStartEvent(parsedGameId, roundState);
+            RoundStartEvent startEvent = (parsedGameId, roundState).Adapt<RoundStartEvent>();
 
             await Clients.Group(groupName).SendAsync("RoundStart", startEvent).ConfigureAwait(false);
 
@@ -192,17 +192,17 @@ public sealed class GameHub : Hub
                 .ClickSymbolAsync(gameId, playerId, request.SymbolId, cancellationToken)
                 .ConfigureAwait(false);
 
-            RoundResultEvent resultEvent = CreateRoundResultEvent(gameId, result);
+            RoundResultEvent resultEvent = (gameId, result).Adapt<RoundResultEvent>();
             await Clients.Group(groupName).SendAsync("RoundResult", resultEvent).ConfigureAwait(false);
 
             if (result.GameCompleted && result.ScoreSnapshot is not null)
             {
-                GameOverEvent gameOverEvent = CreateGameOverEvent(gameId, result.ScoreSnapshot);
+                GameOverEvent gameOverEvent = (gameId, result.ScoreSnapshot).Adapt<GameOverEvent>();
                 await Clients.Group(groupName).SendAsync("GameOver", gameOverEvent).ConfigureAwait(false);
             }
             else if (result.NextRound is not null)
             {
-                RoundStartEvent nextRoundEvent = CreateRoundStartEvent(gameId, result.NextRound);
+                RoundStartEvent nextRoundEvent = (gameId, result.NextRound).Adapt<RoundStartEvent>();
                 await Clients.Group(groupName).SendAsync("RoundStart", nextRoundEvent).ConfigureAwait(false);
             }
 
@@ -267,48 +267,4 @@ public sealed class GameHub : Hub
         return string.Concat(GroupPrefix, gameId.Value.ToString("N"));
     }
 
-    private static RoundStartEvent CreateRoundStartEvent(GameId gameId, GameRoundState roundState)
-    {
-        IReadOnlyDictionary<string, int> playerCards = roundState.PlayerCardIndexes
-            .ToDictionary(pair => pair.Key.Value.ToString(), pair => pair.Value);
-
-        return new RoundStartEvent(
-            gameId.Value.ToString(),
-            roundState.RoundNumber,
-            roundState.SharedCardIndex,
-            playerCards,
-            roundState.StartedAtUtc);
-    }
-
-    private static RoundResultEvent CreateRoundResultEvent(GameId gameId, GameAttemptResult attemptResult)
-    {
-        RoundResolutionResult resolution = attemptResult.Resolution;
-
-        IReadOnlyDictionary<string, int>? scores = attemptResult.ScoreSnapshot is null
-            ? null
-            : attemptResult.ScoreSnapshot.Scores.ToDictionary(pair => pair.Key.Value.ToString(), pair => pair.Value);
-
-        double? durationMilliseconds = resolution.ResolutionDuration?.TotalMilliseconds;
-
-        return new RoundResultEvent(
-            gameId.Value.ToString(),
-            resolution.RoundResolved,
-            resolution.AttemptAccepted,
-            resolution.ResolvingPlayerId?.Value.ToString(),
-            resolution.ResolvingPlayerCardIndex,
-            resolution.MatchingSymbolId,
-            resolution.RoundNumber,
-            resolution.ProcessedAtUtc,
-            durationMilliseconds,
-            scores,
-            attemptResult.GameCompleted);
-    }
-
-    private static GameOverEvent CreateGameOverEvent(GameId gameId, ScoreSnapshot snapshot)
-    {
-        IReadOnlyDictionary<string, int> scores = snapshot.Scores
-            .ToDictionary(pair => pair.Key.Value.ToString(), pair => pair.Value);
-
-        return new GameOverEvent(gameId.Value.ToString(), scores, snapshot.CapturedAtUtc);
-    }
 }

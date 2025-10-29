@@ -1,7 +1,9 @@
 using System;
 using EmojitServer.Application.Abstractions.Services;
+using EmojitServer.Application.Contracts.Mapping;
 using EmojitServer.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Mapster;
 
 namespace EmojitServer.Application.DependencyInjection;
 
@@ -19,6 +21,10 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
+
+        TypeAdapterConfig config = TypeAdapterConfig.GlobalSettings;
+        ContractMappingConfiguration.Register(config);
+        services.AddSingleton(config);
 
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<ILeaderboardService, LeaderboardService>();

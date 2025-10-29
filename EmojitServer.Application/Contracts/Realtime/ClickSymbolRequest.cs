@@ -1,9 +1,7 @@
-using System;
-
-namespace EmojitServer.Api.Models.Realtime;
+namespace EmojitServer.Application.Contracts.Realtime;
 
 /// <summary>
-/// Represents the payload submitted when a player selects a symbol during a round.
+/// Represents the payload submitted when a player selects a symbol during an active round.
 /// </summary>
 public sealed class ClickSymbolRequest
 {
