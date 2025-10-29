@@ -1,7 +1,7 @@
-using System.Reflection;
+using EmojitServer.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using EmojitServer.Infrastructure.Persistence;
+using System.Reflection;
 
 #nullable disable
 

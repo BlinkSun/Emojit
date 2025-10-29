@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using EmojitServer.Application.Contracts.Leaderboard;
 using EmojitServer.Application.Contracts.Realtime;
 using EmojitServer.Application.Contracts.Stats;

@@ -1,14 +1,10 @@
-using System;
+using EmojitServer.Application.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using EmojitServer.Application.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EmojitServer.Api.Configuration;
 
@@ -88,7 +84,7 @@ public sealed class JwtBearerOptionsConfigurator : IConfigureNamedOptions<JwtBea
                 return Task.CompletedTask;
             },
         };
-}
+    }
 
     private static byte[] GetSigningKeyBytes(string signingKey)
     {

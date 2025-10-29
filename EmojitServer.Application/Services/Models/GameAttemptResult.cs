@@ -1,4 +1,3 @@
-using System;
 using EmojitServer.Core.GameModes;
 
 namespace EmojitServer.Application.Services.Models;

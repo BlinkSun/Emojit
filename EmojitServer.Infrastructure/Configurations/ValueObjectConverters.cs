@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text.Json;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.Json;
 
 namespace EmojitServer.Infrastructure.Configurations;
 
@@ -58,13 +54,13 @@ internal static class ValueObjectConverters
     {
         if (string.IsNullOrWhiteSpace(json))
         {
-            return new List<PlayerId>();
+            return [];
         }
 
         List<Guid>? deserialized = JsonSerializer.Deserialize<List<Guid>>(json, SerializerOptions);
         if (deserialized is null)
         {
-            return new List<PlayerId>();
+            return [];
         }
 
         return deserialized

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-
 namespace EmojitServer.Api.Configuration;
 
 /// <summary>
@@ -17,28 +13,28 @@ public sealed class CorsOptions
     /// <summary>
     /// Gets or sets the collection of origins allowed to access the API.
     /// </summary>
-    public List<string> AllowedOrigins { get; set; } = new();
+    public List<string> AllowedOrigins { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the HTTP methods permitted by the CORS policy.
     /// </summary>
-    public List<string> AllowedMethods { get; set; } = new()
-    {
+    public List<string> AllowedMethods { get; set; } =
+    [
         HttpMethods.Get,
         HttpMethods.Post,
         HttpMethods.Options,
-    };
+    ];
 
     /// <summary>
     /// Gets or sets the headers permitted by the CORS policy.
     /// </summary>
-    public List<string> AllowedHeaders { get; set; } = new()
-    {
+    public List<string> AllowedHeaders { get; set; } =
+    [
         "Content-Type",
         "Authorization",
         "X-Requested-With",
         "X-SignalR-User-Agent",
-    };
+    ];
 
     /// <summary>
     /// Gets or sets a value indicating whether cross-site credentials are permitted.
@@ -156,7 +152,7 @@ public sealed class CorsOptions
         ArgumentNullException.ThrowIfNull(values);
         ArgumentNullException.ThrowIfNull(comparer);
 
-        List<string> results = new();
+        List<string> results = [];
         HashSet<string> seen = new(comparer);
 
         foreach (string value in values)

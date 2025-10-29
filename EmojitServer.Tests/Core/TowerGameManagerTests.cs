@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using EmojitServer.Core.Design;
 using EmojitServer.Core.GameModes;
 using EmojitServer.Core.Managers;
 using EmojitServer.Domain.Entities;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
-using Xunit;
 
 namespace EmojitServer.Tests.Core;
 
@@ -32,7 +29,7 @@ public sealed class TowerGameManagerTests
 
         manager.Initialize(
             session,
-            new List<PlayerId> { playerOne, playerTwo },
+            [playerOne, playerTwo],
             design,
             new GameModeConfiguration(maxRounds: 1, shuffleDeck: false));
 

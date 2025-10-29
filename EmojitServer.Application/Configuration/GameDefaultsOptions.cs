@@ -1,4 +1,3 @@
-using System;
 using EmojitServer.Domain.Enums;
 
 namespace EmojitServer.Application.Configuration;

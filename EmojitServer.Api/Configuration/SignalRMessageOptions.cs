@@ -1,5 +1,3 @@
-using System;
-
 namespace EmojitServer.Api.Configuration;
 
 /// <summary>

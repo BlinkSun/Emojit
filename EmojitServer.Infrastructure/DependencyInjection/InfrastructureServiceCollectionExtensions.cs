@@ -1,4 +1,3 @@
-using System;
 using EmojitServer.Application.Abstractions.Repositories;
 using EmojitServer.Infrastructure.Persistence;
 using EmojitServer.Infrastructure.Repositories;

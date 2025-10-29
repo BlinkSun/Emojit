@@ -1,13 +1,8 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using EmojitServer.Api.Models.Authentication;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Services.Models;
 using EmojitServer.Domain.ValueObjects;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace EmojitServer.Api.Controllers;
 

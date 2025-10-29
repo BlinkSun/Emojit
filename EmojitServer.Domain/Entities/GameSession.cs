@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 
@@ -10,8 +8,8 @@ namespace EmojitServer.Domain.Entities;
 /// </summary>
 public sealed class GameSession
 {
-    private readonly List<PlayerId> _participants = new();
-    private readonly List<RoundLog> _roundLogs = new();
+    private readonly List<PlayerId> _participants = [];
+    private readonly List<RoundLog> _roundLogs = [];
 
     private GameSession()
     {

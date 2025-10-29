@@ -1,5 +1,3 @@
-using System;
-
 namespace EmojitServer.Domain.ValueObjects;
 
 /// <summary>

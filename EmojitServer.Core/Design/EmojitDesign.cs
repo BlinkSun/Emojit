@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace EmojitServer.Core.Design;
 
@@ -15,7 +12,7 @@ public sealed class EmojitDesign
     private EmojitDesign(int order, IReadOnlyList<ReadOnlyCollection<int>> cards)
     {
         Order = order;
-        SymbolCount = order * order + order + 1;
+        SymbolCount = (order * order) + order + 1;
         SymbolsPerCard = order + 1;
         CardCount = SymbolCount;
         _cards = new ReadOnlyCollection<ReadOnlyCollection<int>>(cards.ToList());
@@ -116,7 +113,7 @@ public sealed class EmojitDesign
 
         try
         {
-            HashSet<int> lookup = new HashSet<int>(firstCard);
+            HashSet<int> lookup = [.. firstCard];
             int? commonSymbol = null;
 
             foreach (int symbol in secondCard)
@@ -159,7 +156,7 @@ public sealed class EmojitDesign
                     throw new InvalidOperationException($"Card at index {cardIndex} does not contain the expected number of symbols.");
                 }
 
-                HashSet<int> uniquenessCheck = new HashSet<int>(card);
+                HashSet<int> uniquenessCheck = [.. card];
                 if (uniquenessCheck.Count != SymbolsPerCard)
                 {
                     throw new InvalidOperationException($"Card at index {cardIndex} contains duplicate symbols.");
@@ -213,8 +210,8 @@ public sealed class EmojitDesign
     private static IReadOnlyList<ReadOnlyCollection<int>> BuildDeck(int order)
     {
         int symbolsPerCard = order + 1;
-        int totalCards = order * order + order + 1;
-        List<ReadOnlyCollection<int>> cards = new List<ReadOnlyCollection<int>>(totalCards);
+        int totalCards = (order * order) + order + 1;
+        List<ReadOnlyCollection<int>> cards = new(totalCards);
 
         // First card contains symbols 0..order
         int[] firstCard = new int[symbolsPerCard];
@@ -248,7 +245,7 @@ public sealed class EmojitDesign
 
                 for (int c = 0; c < order; c++)
                 {
-                    int symbol = order + 1 + (c * order) + ((a * c + b) % order);
+                    int symbol = order + 1 + (c * order) + (((a * c) + b) % order);
                     card[c + 1] = symbol;
                 }
 

@@ -1,10 +1,7 @@
-using System;
-using EmojitServer.Core.Design;
 using EmojitServer.Application.Contracts.Stats;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using EmojitServer.Core.Design;
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EmojitServer.Api.Controllers;
 

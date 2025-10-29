@@ -1,4 +1,3 @@
-using System;
 using EmojitServer.Api.Configuration;
 using EmojitServer.Api.Hubs;
 using EmojitServer.Api.Middleware;
@@ -7,21 +6,13 @@ using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
 using EmojitServer.Infrastructure.Persistence;
-using System.Globalization;
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Threading.RateLimiting;
 
 namespace EmojitServer.Api;
 

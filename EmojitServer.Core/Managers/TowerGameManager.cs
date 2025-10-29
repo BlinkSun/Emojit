@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using EmojitServer.Core.Design;
 using EmojitServer.Core.GameModes;
 using EmojitServer.Domain.Entities;
@@ -107,7 +104,7 @@ public sealed class TowerGameManager : IGameMode
                 throw new ArgumentException("At least one participant is required to initialize the Tower mode.", nameof(participants));
             }
 
-            Dictionary<PlayerId, int> scoreboard = new();
+            Dictionary<PlayerId, int> scoreboard = [];
             foreach (PlayerId participant in orderedParticipants)
             {
                 if (scoreboard.ContainsKey(participant))
@@ -176,7 +173,7 @@ public sealed class TowerGameManager : IGameMode
             {
                 int sharedCardIndex = DrawCard();
 
-                Dictionary<PlayerId, int> assignments = new();
+                Dictionary<PlayerId, int> assignments = [];
                 IReadOnlyList<PlayerId> participants = _participants!;
                 foreach (PlayerId participant in participants)
                 {

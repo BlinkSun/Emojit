@@ -1,8 +1,6 @@
-using System.Threading.Tasks;
 using EmojitServer.Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace EmojitServer.Tests.Integration;
 
@@ -27,7 +25,7 @@ public sealed class DatabaseMigrationTests
         await using EmojitDbContext context = new(options);
         await context.Database.MigrateAsync().ConfigureAwait(false);
 
-        var appliedMigrations = await context.Database.GetAppliedMigrationsAsync().ConfigureAwait(false);
+        IEnumerable<string> appliedMigrations = await context.Database.GetAppliedMigrationsAsync().ConfigureAwait(false);
         Assert.NotEmpty(appliedMigrations);
     }
 }

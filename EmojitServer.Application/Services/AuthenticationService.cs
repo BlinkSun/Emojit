@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Repositories;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Configuration;
@@ -14,6 +7,9 @@ using EmojitServer.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace EmojitServer.Application.Services;
 
@@ -109,13 +105,13 @@ public sealed class AuthenticationService : IAuthenticationService
 
     private JwtSecurityToken CreateToken(Player player, DateTimeOffset issuedAtUtc, DateTimeOffset expiresAtUtc)
     {
-        List<Claim> claims = new()
-        {
+        List<Claim> claims =
+        [
             new Claim(JwtRegisteredClaimNames.Sub, player.Id.Value.ToString()),
             new Claim(JwtRegisteredClaimNames.UniqueName, player.DisplayName),
             new Claim("playerId", player.Id.Value.ToString()),
             new Claim("displayName", player.DisplayName),
-        };
+        ];
 
         byte[] signingKeyBytes = GetSigningKeyBytes();
         SymmetricSecurityKey signingKey = new(signingKeyBytes);

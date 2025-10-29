@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using EmojitServer.Domain.Entities;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EmojitServer.Infrastructure.Configurations;

@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using EmojitServer.Core.Design;
 using EmojitServer.Domain.Entities;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
+using System.Collections.ObjectModel;
 
 namespace EmojitServer.Core.GameModes;
 
@@ -151,7 +149,7 @@ public sealed class GameRoundState
             throw new ArgumentException("At least one player must be associated with the round.", nameof(playerCardIndexes));
         }
 
-        Dictionary<PlayerId, int> normalizedAssignments = new();
+        Dictionary<PlayerId, int> normalizedAssignments = [];
         foreach (KeyValuePair<PlayerId, int> assignment in playerCardIndexes)
         {
             if (assignment.Key.IsEmpty)
@@ -338,7 +336,7 @@ public sealed class ScoreSnapshot
             throw new ArgumentNullException(nameof(scores));
         }
 
-        Dictionary<PlayerId, int> normalizedScores = new();
+        Dictionary<PlayerId, int> normalizedScores = [];
         foreach (KeyValuePair<PlayerId, int> score in scores)
         {
             if (score.Key.IsEmpty)

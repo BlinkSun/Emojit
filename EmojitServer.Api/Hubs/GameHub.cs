@@ -1,22 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Contracts.Realtime;
 using EmojitServer.Application.Services.Models;
 using EmojitServer.Core.GameModes;
 using EmojitServer.Domain.Entities;
-using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
-using Mapster;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace EmojitServer.Api.Hubs;
 

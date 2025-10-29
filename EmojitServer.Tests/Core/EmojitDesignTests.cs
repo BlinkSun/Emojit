@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using EmojitServer.Core.Design;
-using Xunit;
 
 namespace EmojitServer.Tests.Core;
 
@@ -32,7 +29,7 @@ public sealed class EmojitDesignTests
         IReadOnlyList<int> sharedCard = design.GetCard(0);
         IReadOnlyList<int> secondCard = design.GetCard(5);
 
-        HashSet<int> sharedSymbols = new(sharedCard);
+        HashSet<int> sharedSymbols = [.. sharedCard];
         sharedSymbols.IntersectWith(secondCard);
 
         Assert.Single(sharedSymbols);

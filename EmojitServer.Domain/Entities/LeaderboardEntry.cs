@@ -1,4 +1,3 @@
-using System;
 using EmojitServer.Domain.ValueObjects;
 
 namespace EmojitServer.Domain.Entities;

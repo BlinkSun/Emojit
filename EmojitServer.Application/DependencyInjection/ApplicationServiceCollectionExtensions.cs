@@ -1,9 +1,8 @@
-using System;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Contracts.Mapping;
 using EmojitServer.Application.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Mapster;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EmojitServer.Application.DependencyInjection;
 

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Repositories;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Configuration;
@@ -16,7 +10,7 @@ using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
+using System.Collections.Concurrent;
 
 namespace EmojitServer.Tests.Application;
 
@@ -260,7 +254,7 @@ public sealed class GameServiceFlowTests
     /// </summary>
     private sealed class TrackingLogService : ILogService
     {
-        private readonly List<RoundLog> _roundLogs = new();
+        private readonly List<RoundLog> _roundLogs = [];
 
         public RoundLog CreateRoundLog(GameSession session, GameRoundState roundState, RoundResolutionResult resolution)
         {

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Repositories;
 using EmojitServer.Application.Abstractions.Services;
 using EmojitServer.Application.Configuration;
@@ -16,6 +10,7 @@ using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 
 namespace EmojitServer.Application.Services;
 
@@ -421,7 +416,7 @@ public sealed class GameService : IGameService
     {
         if (snapshot.Scores.Count == 0)
         {
-            return new HashSet<PlayerId>();
+            return [];
         }
 
         int bestScore = snapshot.Scores.Values.Max();

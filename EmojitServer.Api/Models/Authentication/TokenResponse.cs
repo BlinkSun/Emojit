@@ -1,5 +1,3 @@
-using System;
-
 namespace EmojitServer.Api.Models.Authentication;
 
 /// <summary>
