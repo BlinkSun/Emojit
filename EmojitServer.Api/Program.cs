@@ -2,23 +2,24 @@ using System;
 using EmojitServer.Api.Configuration;
 using EmojitServer.Api.Hubs;
 using EmojitServer.Api.Middleware;
-using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Application.Configuration;
+using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
 using EmojitServer.Infrastructure.Persistence;
 using System.Globalization;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 
 namespace EmojitServer.Api;
 
@@ -53,6 +54,11 @@ internal static class Program
             .PostConfigure(options => options.Validate())
             .ValidateOnStart();
 
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .PostConfigure(options => options.Validate())
+            .ValidateOnStart();
+
         services.AddOptions<SignalRMessageOptions>()
             .Bind(configuration.GetSection(SignalRMessageOptions.SectionName))
             .PostConfigure(options => options.Validate())
@@ -66,6 +72,14 @@ internal static class Program
         services.AddCors();
 
         services.AddControllers();
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer();
+        services.AddAuthorization();
+
+        services.AddSingleton<IConfigureOptions<JwtBearerOptions>, JwtBearerOptionsConfigurator>();
         services.AddHealthChecks()
             .AddDbContextCheck<EmojitDbContext>("database");
 
@@ -181,6 +195,7 @@ internal static class Program
         app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseCors(policy => ConfigureCorsPolicy(policy, corsOptions));
         app.UseRateLimiter();
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();

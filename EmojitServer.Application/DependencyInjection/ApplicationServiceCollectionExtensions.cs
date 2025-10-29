@@ -26,6 +26,7 @@ public static class ApplicationServiceCollectionExtensions
         ContractMappingConfiguration.Register(config);
         services.AddSingleton(config);
 
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<ILeaderboardService, LeaderboardService>();
         services.AddScoped<ILogService, LogService>();
