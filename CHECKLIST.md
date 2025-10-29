@@ -41,16 +41,17 @@
 
 ## ✅ Étape 3 — Infrastructure (EF Core + Repos)
 - [x] Créer EmojitDbContext + DbSet<>
-- [ ] Configurer OnModelCreating
-- [ ] Créer Repositories :
-  - [ ] IPlayerRepository
-  - [ ] IGameSessionRepository
-  - [ ] IRoundLogRepository
-  - [ ] ILeaderboardRepository
-- [ ] ConnectionString appsettings.json
-- [ ] Migrations EF :
-  - [ ] `dotnet ef migrations add InitialCreate -p EmojitServer.Infrastructure -s EmojitServer.Api`
+- [x] Configurer OnModelCreating
+- [x] Créer Repositories :
+  - [x] IPlayerRepository
+  - [x] IGameSessionRepository
+  - [x] IRoundLogRepository
+  - [x] ILeaderboardRepository
+- [x] ConnectionString appsettings.json
+- [x] Migrations EF :
+  - [x] `dotnet ef migrations add InitialCreate -p EmojitServer.Infrastructure -s EmojitServer.Api`
   - [ ] `dotnet ef database update -p EmojitServer.Infrastructure -s EmojitServer.Api`
+    - [ ] Bloqué : outils dotnet indisponibles dans l'environnement d'exécution actuel.
 
 ## ✅ Étape 4 — Application (services logiques)
 - [ ] GameService :
