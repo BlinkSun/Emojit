@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace EmojitServer.Api.Models;
 
@@ -7,4 +8,8 @@ namespace EmojitServer.Api.Models;
 /// </summary>
 /// <param name="Status">The textual status describing the system health.</param>
 /// <param name="CheckedAtUtc">The timestamp when the health was evaluated in UTC.</param>
-public sealed record HealthStatusResponse(string Status, DateTimeOffset CheckedAtUtc);
+/// <param name="Components">The individual component health statuses.</param>
+public sealed record HealthStatusResponse(
+    string Status,
+    DateTimeOffset CheckedAtUtc,
+    IReadOnlyDictionary<string, HealthCheckComponentStatus> Components);
