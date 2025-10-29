@@ -2,6 +2,7 @@ using EmojitClient.Maui.Abstractions.Realtime;
 using EmojitClient.Maui.Exceptions;
 using EmojitClient.Maui.Models.Realtime;
 using EmojitClient.Maui.Options;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

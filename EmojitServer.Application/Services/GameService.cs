@@ -212,12 +212,7 @@ public sealed class GameService : IGameService
 
             _validationService.EnsureAttemptAllowed(runtime.Session, playerId);
 
-            GameRoundState? roundState = runtime.GameMode.CurrentRound;
-            if (roundState is null)
-            {
-                throw new InvalidOperationException("No active round is currently available.");
-            }
-
+            GameRoundState? roundState = runtime.GameMode.CurrentRound ?? throw new InvalidOperationException("No active round is currently available.");
             RoundResolutionResult resolution = runtime.GameMode.RegisterAttempt(playerId, symbolId, DateTimeOffset.UtcNow);
 
             GameRoundState? nextRound = null;

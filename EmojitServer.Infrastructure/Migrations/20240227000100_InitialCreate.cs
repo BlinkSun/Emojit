@@ -1,3 +1,5 @@
+using EmojitServer.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -5,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmojitServer.Infrastructure.Migrations
 {
     /// <inheritdoc />
+    [DbContext(typeof(EmojitDbContext))]
+    [Migration("20240227000100_InitialCreate")]
     public partial class InitialCreate : Migration
     {
         /// <inheritdoc />

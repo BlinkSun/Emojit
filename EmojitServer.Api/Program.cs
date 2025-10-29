@@ -136,10 +136,11 @@ internal static class Program
             });
         });
 
+        // Use the registered IOptions<SignalRMessageOptions>
         services.AddOptions<HubOptions>()
-            .PostConfigure<SignalRMessageOptions>((hubOptions, messageOptions) =>
+            .PostConfigure<IOptions<SignalRMessageOptions>>((hubOptions, messageOptions) =>
             {
-                hubOptions.MaximumReceiveMessageSize = messageOptions.MaximumReceiveMessageSizeInBytes;
+                hubOptions.MaximumReceiveMessageSize = messageOptions.Value.MaximumReceiveMessageSizeInBytes;
             });
 
         services.AddSignalR();
