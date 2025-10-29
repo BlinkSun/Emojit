@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Repositories;
 using EmojitServer.Application.Abstractions.Services;
+using EmojitServer.Application.Configuration;
 using EmojitServer.Application.Services.Models;
 using EmojitServer.Core.Design;
 using EmojitServer.Core.GameModes;
@@ -14,6 +15,7 @@ using EmojitServer.Domain.Entities;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EmojitServer.Application.Services;
 
@@ -22,14 +24,13 @@ namespace EmojitServer.Application.Services;
 /// </summary>
 public sealed class GameService : IGameService
 {
-    private const int DefaultDesignOrder = 7;
-
     private readonly IGameSessionRepository _gameSessionRepository;
     private readonly IPlayerRepository _playerRepository;
     private readonly IValidationService _validationService;
     private readonly ILogService _logService;
     private readonly ILeaderboardService _leaderboardService;
     private readonly ILogger<GameService> _logger;
+    private readonly GameDefaultsOptions _defaults;
 
     private static readonly ConcurrentDictionary<GameId, ActiveGameRuntime> _activeGames = new();
     private static readonly ConcurrentDictionary<GameId, SemaphoreSlim> _sessionLocks = new();
@@ -49,6 +50,7 @@ public sealed class GameService : IGameService
         IValidationService validationService,
         ILogService logService,
         ILeaderboardService leaderboardService,
+        IOptions<GameDefaultsOptions> defaultsOptions,
         ILogger<GameService> logger)
     {
         _gameSessionRepository = gameSessionRepository;
@@ -57,6 +59,10 @@ public sealed class GameService : IGameService
         _logService = logService;
         _leaderboardService = leaderboardService;
         _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(defaultsOptions);
+        _defaults = defaultsOptions.Value ?? throw new InvalidOperationException("Game defaults configuration is not available.");
+        _defaults.Validate();
     }
 
     /// <inheritdoc />
@@ -64,7 +70,16 @@ public sealed class GameService : IGameService
     {
         try
         {
-            GameSession session = GameSession.Schedule(GameId.New(), mode, maxPlayers, maxRounds, DateTimeOffset.UtcNow);
+            GameMode normalizedMode = _defaults.NormalizeMode(mode);
+            int normalizedMaxPlayers = _defaults.NormalizePlayerCount(maxPlayers);
+            int normalizedMaxRounds = _defaults.NormalizeRoundCount(maxRounds);
+
+            GameSession session = GameSession.Schedule(
+                GameId.New(),
+                normalizedMode,
+                normalizedMaxPlayers,
+                normalizedMaxRounds,
+                DateTimeOffset.UtcNow);
             await _gameSessionRepository.AddAsync(session, cancellationToken).ConfigureAwait(false);
             _sessionLocks.TryAdd(session.Id, new SemaphoreSlim(1, 1));
             return session;
@@ -137,7 +152,7 @@ public sealed class GameService : IGameService
 
             IGameMode gameMode = CreateGameMode(session.Mode);
             EmojitDesign design = CreateDesign();
-            GameModeConfiguration configuration = new(session.MaxRounds);
+            GameModeConfiguration configuration = new(session.MaxRounds, _defaults.ShuffleDeck, _defaults.RandomSeed);
 
             try
             {
@@ -341,9 +356,9 @@ public sealed class GameService : IGameService
         };
     }
 
-    private static EmojitDesign CreateDesign()
+    private EmojitDesign CreateDesign()
     {
-        return EmojitDesign.Create(DefaultDesignOrder);
+        return EmojitDesign.Create(_defaults.DesignOrder);
     }
 
     private async Task PersistEndGameInternalAsync(GameId gameId, ActiveGameRuntime runtime, CancellationToken cancellationToken)
