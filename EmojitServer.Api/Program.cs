@@ -1,22 +1,26 @@
+using EmojitServer.Api.Configuration;
 using EmojitServer.Api.Hubs;
 using EmojitServer.Application.DependencyInjection;
+using EmojitServer.Application.Configuration;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 
 namespace EmojitServer.Api;
 
 internal static class Program
 {
-    private const string DefaultCorsPolicyName = "EmojitCorsPolicy";
 
     private static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        builder.Configuration.AddEnvironmentVariables("EMOJIT_");
 
         ConfigureServices(builder.Services, builder.Configuration);
 
@@ -29,15 +33,17 @@ internal static class Program
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCors(options =>
-        {
-            options.AddPolicy(DefaultCorsPolicyName, policy =>
-            {
-                policy.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+        services.AddOptions<CorsOptions>()
+            .Bind(configuration.GetSection(CorsOptions.SectionName))
+            .PostConfigure(options => options.Validate())
+            .ValidateOnStart();
+
+        services.AddOptions<GameDefaultsOptions>()
+            .Bind(configuration.GetSection(GameDefaultsOptions.SectionName))
+            .PostConfigure(options => options.Validate())
+            .ValidateOnStart();
+
+        services.AddCors();
 
         services.AddControllers();
         services.AddSignalR();
@@ -67,11 +73,34 @@ internal static class Program
 
         app.UseHttpsRedirection();
 
+        CorsOptions corsOptions = app.Services.GetRequiredService<IOptions<CorsOptions>>().Value;
+
         app.UseRouting();
-        app.UseCors(DefaultCorsPolicyName);
+        app.UseCors(policy => ConfigureCorsPolicy(policy, corsOptions));
         app.UseAuthorization();
 
         app.MapControllers();
         app.MapHub<GameHub>("/hubs/game");
+    }
+
+    private static void ConfigureCorsPolicy(CorsPolicyBuilder policyBuilder, CorsOptions corsOptions)
+    {
+        if (corsOptions.AllowedOrigins.Count == 0)
+        {
+            policyBuilder.AllowAnyOrigin();
+        }
+        else
+        {
+            policyBuilder.WithOrigins(corsOptions.AllowedOrigins.ToArray());
+        }
+
+        policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+
+        if (corsOptions.AllowCredentials && corsOptions.AllowedOrigins.Count > 0)
+        {
+            policyBuilder.AllowCredentials();
+        }
     }
 }

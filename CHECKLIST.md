@@ -101,12 +101,13 @@
 - [x] Mapper automatique (Mapster/AutoMapper)
 
 ## ✅ Étape 8 — Config & Settings
-- [ ] appsettings.json :
-  - [ ] ConnectionStrings
-  - [ ] CORS origins
-  - [ ] GameDefaults
-- [ ] Options binding IOptions<T>
-- [ ] Env vars prod
+- [x] appsettings.json :
+  - [x] ConnectionStrings
+  - [x] CORS origins
+  - [x] GameDefaults
+- [x] Options binding IOptions<T>
+- [x] Env vars prod
+  - [x] Prefix EMOJIT_ for overrides
 
 ## ✅ Étape 9 — Logging & Observabilité
 - [ ] Serilog (ou ILogger)
