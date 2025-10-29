@@ -129,7 +129,7 @@
 ## ✅ Étape 11 — Sécurité
 - [x] CORS strict
   - [x] Validation stricte des origines, méthodes et en-têtes autorisés
-- [ ] Limiter taille messages SignalR
+- [x] Limiter taille messages SignalR
 - [ ] Rate limiting
 - [ ] (Future) JWT Auth
 
