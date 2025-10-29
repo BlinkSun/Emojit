@@ -6,14 +6,18 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Linq;
 
 namespace EmojitClient.Maui.Services.Realtime;
 
 /// <summary>
 /// Provides a strongly typed wrapper around the Emojit real-time SignalR hub.
 /// </summary>
-public sealed class GameHubClient : IGameHubClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="GameHubClient"/> class.
+/// </remarks>
+/// <param name="optionsAccessor">Provides access to the configured API options.</param>
+/// <param name="logger">The logger instance.</param>
+public sealed class GameHubClient(IOptions<EmojitApiOptions> optionsAccessor, ILogger<GameHubClient> logger) : IGameHubClient
 {
     private const string CreateGameMethod = "CreateGame";
     private const string JoinGameMethod = "JoinGame";
@@ -23,23 +27,12 @@ public sealed class GameHubClient : IGameHubClient
     private const string RoundResultMessage = "RoundResult";
     private const string GameOverMessage = "GameOver";
 
-    private readonly EmojitApiOptions _options;
-    private readonly ILogger<GameHubClient> _logger;
-    private readonly SemaphoreSlim _connectionLock = new(1, 1);
+    private readonly EmojitApiOptions options = optionsAccessor?.Value ?? throw new ArgumentNullException(nameof(optionsAccessor));
+    private readonly ILogger<GameHubClient> logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly SemaphoreSlim connectionLock = new(1, 1);
 
     private HubConnection? _hubConnection;
     private Func<CancellationToken, Task<string>>? _accessTokenProvider;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GameHubClient"/> class.
-    /// </summary>
-    /// <param name="optionsAccessor">Provides access to the configured API options.</param>
-    /// <param name="logger">The logger instance.</param>
-    public GameHubClient(IOptions<EmojitApiOptions> optionsAccessor, ILogger<GameHubClient> logger)
-    {
-        _options = optionsAccessor?.Value ?? throw new ArgumentNullException(nameof(optionsAccessor));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
 
     /// <inheritdoc />
     public event Func<RoundStartEvent, Task>? RoundStarted;
@@ -55,9 +48,9 @@ public sealed class GameHubClient : IGameHubClient
     {
         ArgumentNullException.ThrowIfNull(accessTokenProvider);
 
-        _options.Validate();
+        options.Validate();
 
-        await _connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             _accessTokenProvider = accessTokenProvider;
@@ -69,7 +62,7 @@ public sealed class GameHubClient : IGameHubClient
                     case HubConnectionState.Connected:
                     case HubConnectionState.Connecting:
                     case HubConnectionState.Reconnecting:
-                        _logger.LogDebug("Reusing existing SignalR connection. State={State}.", _hubConnection.State);
+                        logger.LogDebug("Reusing existing SignalR connection. State={State}.", _hubConnection.State);
                         return;
                 }
 
@@ -81,18 +74,18 @@ public sealed class GameHubClient : IGameHubClient
             RegisterHandlers(_hubConnection);
 
             await _hubConnection.StartAsync(cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation("Connected to Emojit game hub at {HubUri}.", _options.BuildUri(_options.GameHubPath));
+            logger.LogInformation("Connected to Emojit game hub at {HubUri}.", options.BuildUri(options.GameHubPath));
         }
         finally
         {
-            _connectionLock.Release();
+            connectionLock.Release();
         }
     }
 
     /// <inheritdoc />
     public async Task DisconnectAsync(CancellationToken cancellationToken = default)
     {
-        await _connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_hubConnection is null)
@@ -112,7 +105,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         finally
         {
-            _connectionLock.Release();
+            connectionLock.Release();
         }
     }
 
@@ -131,7 +124,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while invoking {Method}.", CreateGameMethod);
+            logger.LogError(ex, "Unexpected error while invoking {Method}.", CreateGameMethod);
             throw new EmojitRealtimeException("An unexpected error occurred while creating the game.", ex);
         }
     }
@@ -151,7 +144,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while invoking {Method}.", JoinGameMethod);
+            logger.LogError(ex, "Unexpected error while invoking {Method}.", JoinGameMethod);
             throw new EmojitRealtimeException("An unexpected error occurred while joining the game.", ex);
         }
     }
@@ -176,7 +169,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while invoking {Method}.", StartGameMethod);
+            logger.LogError(ex, "Unexpected error while invoking {Method}.", StartGameMethod);
             throw new EmojitRealtimeException("An unexpected error occurred while starting the game.", ex);
         }
     }
@@ -196,7 +189,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while invoking {Method}.", ClickSymbolMethod);
+            logger.LogError(ex, "Unexpected error while invoking {Method}.", ClickSymbolMethod);
             throw new EmojitRealtimeException("An unexpected error occurred while submitting the attempt.", ex);
         }
     }
@@ -205,12 +198,12 @@ public sealed class GameHubClient : IGameHubClient
     public async ValueTask DisposeAsync()
     {
         await DisconnectAsync().ConfigureAwait(false);
-        _connectionLock.Dispose();
+        connectionLock.Dispose();
     }
 
     private HubConnection BuildHubConnection()
     {
-        Uri hubUri = _options.BuildUri(_options.GameHubPath);
+        Uri hubUri = options.BuildUri(options.GameHubPath);
 
         HubConnection connection = new HubConnectionBuilder()
             .WithUrl(hubUri, options =>
@@ -228,7 +221,7 @@ public sealed class GameHubClient : IGameHubClient
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Failed to retrieve access token for SignalR connection.");
+                        logger.LogError(ex, "Failed to retrieve access token for SignalR connection.");
                         throw;
                     }
                 };
@@ -247,11 +240,11 @@ public sealed class GameHubClient : IGameHubClient
     {
         if (exception is null)
         {
-            _logger.LogInformation("SignalR connection closed gracefully.");
+            logger.LogInformation("SignalR connection closed gracefully.");
         }
         else
         {
-            _logger.LogWarning(exception, "SignalR connection closed due to an error.");
+            logger.LogWarning(exception, "SignalR connection closed due to an error.");
         }
 
         return Task.CompletedTask;
@@ -261,11 +254,11 @@ public sealed class GameHubClient : IGameHubClient
     {
         if (exception is null)
         {
-            _logger.LogWarning("SignalR connection is reconnecting.");
+            logger.LogWarning("SignalR connection is reconnecting.");
         }
         else
         {
-            _logger.LogWarning(exception, "SignalR connection is reconnecting after an error.");
+            logger.LogWarning(exception, "SignalR connection is reconnecting after an error.");
         }
 
         return Task.CompletedTask;
@@ -273,7 +266,7 @@ public sealed class GameHubClient : IGameHubClient
 
     private Task OnConnectionReconnectedAsync(string? connectionId)
     {
-        _logger.LogInformation("SignalR connection re-established. ConnectionId={ConnectionId}.", connectionId);
+        logger.LogInformation("SignalR connection re-established. ConnectionId={ConnectionId}.", connectionId);
         return Task.CompletedTask;
     }
 
@@ -303,14 +296,14 @@ public sealed class GameHubClient : IGameHubClient
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while executing {EventName} subscriber.", eventName);
+                logger.LogError(ex, "An error occurred while executing {EventName} subscriber.", eventName);
             }
         }
     }
 
     private async Task<HubConnection> EnsureConnectionAsync(CancellationToken cancellationToken)
     {
-        await _connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await connectionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_hubConnection is null)
@@ -325,7 +318,7 @@ public sealed class GameHubClient : IGameHubClient
                     throw new EmojitRealtimeException("An access token provider is not configured.");
                 }
 
-                _logger.LogInformation("Reconnecting to Emojit game hub.");
+                logger.LogInformation("Reconnecting to Emojit game hub.");
 
                 await _hubConnection.StartAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -334,7 +327,7 @@ public sealed class GameHubClient : IGameHubClient
         }
         finally
         {
-            _connectionLock.Release();
+            connectionLock.Release();
         }
     }
 }
