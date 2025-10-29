@@ -7,7 +7,10 @@ using EmojitServer.Application.Configuration;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
 using EmojitServer.Infrastructure.Persistence;
+using System.Globalization;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -55,11 +58,76 @@ internal static class Program
             .PostConfigure(options => options.Validate())
             .ValidateOnStart();
 
+        services.AddOptions<RateLimitingOptions>()
+            .Bind(configuration.GetSection(RateLimitingOptions.SectionName))
+            .PostConfigure(options => options.Validate())
+            .ValidateOnStart();
+
         services.AddCors();
 
         services.AddControllers();
         services.AddHealthChecks()
             .AddDbContextCheck<EmojitDbContext>("database");
+
+        services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            rateLimiterOptions.OnRejected = (context, _) =>
+            {
+                HttpContext httpContext = context.HttpContext;
+                try
+                {
+                    RateLimitingOptions limiterOptions = httpContext.RequestServices
+                        .GetRequiredService<IOptions<RateLimitingOptions>>()
+                        .Value;
+
+                    string retryAfter = limiterOptions.WindowInSeconds
+                        .ToString(CultureInfo.InvariantCulture);
+                    httpContext.Response.Headers.RetryAfter = retryAfter;
+                }
+                catch (Exception exception)
+                {
+                    ILogger logger = httpContext.RequestServices
+                        .GetRequiredService<ILoggerFactory>()
+                        .CreateLogger(nameof(Program));
+                    logger.LogError(exception, "Failed to compute rate limiting retry-after header.");
+                }
+
+                return ValueTask.CompletedTask;
+            };
+
+            rateLimiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+            {
+                try
+                {
+                    RateLimitingOptions limiterOptions = httpContext.RequestServices
+                        .GetRequiredService<IOptions<RateLimitingOptions>>()
+                        .Value;
+
+                    string partitionKey = ResolveClientPartitionKey(httpContext);
+
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey,
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = limiterOptions.PermitLimit,
+                            QueueProcessingOrder = limiterOptions.QueueProcessingOrder,
+                            QueueLimit = limiterOptions.QueueLimit,
+                            Window = limiterOptions.ToWindowTimeSpan(),
+                        });
+                }
+                catch (Exception exception)
+                {
+                    ILogger logger = httpContext.RequestServices
+                        .GetRequiredService<ILoggerFactory>()
+                        .CreateLogger(nameof(Program));
+                    logger.LogError(exception, "Failed to resolve rate limiter configuration. Allowing request without throttling.");
+
+                    string fallbackPartitionKey = ResolveClientPartitionKey(httpContext);
+                    return RateLimitPartition.GetNoLimiter(fallbackPartitionKey);
+                }
+            });
+        });
 
         services.AddOptions<HubOptions>()
             .PostConfigure<SignalRMessageOptions>((hubOptions, messageOptions) =>
@@ -112,6 +180,7 @@ internal static class Program
         app.UseRouting();
         app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseCors(policy => ConfigureCorsPolicy(policy, corsOptions));
+        app.UseRateLimiter();
         app.UseAuthorization();
 
         app.MapControllers();
@@ -137,5 +206,37 @@ internal static class Program
         {
             policyBuilder.DisallowCredentials();
         }
+    }
+
+    private static string ResolveClientPartitionKey(HttpContext httpContext)
+    {
+        ArgumentNullException.ThrowIfNull(httpContext);
+
+        try
+        {
+            string? authenticatedName = httpContext.User?.Identity?.IsAuthenticated == true
+                ? httpContext.User?.Identity?.Name
+                : null;
+
+            if (!string.IsNullOrWhiteSpace(authenticatedName))
+            {
+                return $"user:{authenticatedName}";
+            }
+
+            string? remoteAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+            if (!string.IsNullOrWhiteSpace(remoteAddress))
+            {
+                return $"ip:{remoteAddress}";
+            }
+        }
+        catch (Exception exception)
+        {
+            ILogger logger = httpContext.RequestServices
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger(nameof(Program));
+            logger.LogWarning(exception, "Unable to resolve rate limiter partition key from request context.");
+        }
+
+        return "anonymous";
     }
 }

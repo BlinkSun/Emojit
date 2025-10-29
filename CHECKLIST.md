@@ -130,7 +130,7 @@
 - [x] CORS strict
   - [x] Validation stricte des origines, méthodes et en-têtes autorisés
 - [x] Limiter taille messages SignalR
-- [ ] Rate limiting
+- [x] Rate limiting
 - [ ] (Future) JWT Auth
 
 ## ✅ Étape 12 — Déploiement local
