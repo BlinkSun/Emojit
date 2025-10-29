@@ -12,6 +12,7 @@ using EmojitServer.Domain.ValueObjects;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 
 namespace EmojitServer.Api.Hubs;
 
@@ -34,6 +35,40 @@ public sealed class GameHub : Hub
     {
         _gameService = gameService;
         _logger = logger;
+    }
+
+    /// <inheritdoc />
+    public override async Task OnConnectedAsync()
+    {
+        await base.OnConnectedAsync().ConfigureAwait(false);
+
+        HttpContext? httpContext = Context.GetHttpContext();
+        string remoteAddress = httpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        string? userIdentifier = Context.UserIdentifier;
+
+        _logger.LogInformation(
+            "Connection {ConnectionId} established from {RemoteAddress} (User: {UserIdentifier}).",
+            Context.ConnectionId,
+            remoteAddress,
+            string.IsNullOrWhiteSpace(userIdentifier) ? "anonymous" : userIdentifier);
+    }
+
+    /// <inheritdoc />
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (exception is null)
+        {
+            _logger.LogInformation("Connection {ConnectionId} disconnected.", Context.ConnectionId);
+        }
+        else
+        {
+            _logger.LogWarning(
+                exception,
+                "Connection {ConnectionId} disconnected due to an error.",
+                Context.ConnectionId);
+        }
+
+        await base.OnDisconnectedAsync(exception).ConfigureAwait(false);
     }
 
     /// <summary>
