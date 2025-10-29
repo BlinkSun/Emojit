@@ -20,6 +20,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmojitServer.Api;
 
@@ -44,8 +46,8 @@ internal static class Program
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptions<CorsOptions>()
-            .Bind(configuration.GetSection(CorsOptions.SectionName))
+        services.AddOptions<Configuration.CorsOptions>()
+            .Bind(configuration.GetSection(Configuration.CorsOptions.SectionName))
             .PostConfigure(options => options.Validate())
             .ValidateOnStart();
 
@@ -81,7 +83,7 @@ internal static class Program
 
         services.AddSingleton<IConfigureOptions<JwtBearerOptions>, JwtBearerOptionsConfigurator>();
         services.AddHealthChecks()
-            .AddDbContextCheck<EmojitDbContext>("database");
+            .AddDbContextCheck<EmojitDbContext>(); // <-- Fixed line
 
         services.AddRateLimiter(rateLimiterOptions =>
         {
@@ -189,7 +191,7 @@ internal static class Program
 
         app.UseHttpsRedirection();
 
-        CorsOptions corsOptions = app.Services.GetRequiredService<IOptions<CorsOptions>>().Value;
+        Configuration.CorsOptions corsOptions = app.Services.GetRequiredService<IOptions<Configuration.CorsOptions>>().Value;
 
         app.UseRouting();
         app.UseMiddleware<RequestLoggingMiddleware>();
@@ -203,7 +205,7 @@ internal static class Program
         app.MapHub<GameHub>("/hubs/game");
     }
 
-    private static void ConfigureCorsPolicy(CorsPolicyBuilder policyBuilder, CorsOptions corsOptions)
+    private static void ConfigureCorsPolicy(CorsPolicyBuilder policyBuilder, Configuration.CorsOptions corsOptions)
     {
         ArgumentNullException.ThrowIfNull(policyBuilder);
         ArgumentNullException.ThrowIfNull(corsOptions);

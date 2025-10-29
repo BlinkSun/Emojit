@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using EmojitServer.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -38,12 +39,8 @@ internal static class ValueObjectConverters
     /// </summary>
     public static readonly ValueConverter<List<PlayerId>, string> PlayerIdCollectionConverter =
         new(
-            static ids =>
-            {
-                IEnumerable<Guid> values = ids?.Select(id => id.Value) ?? Array.Empty<Guid>();
-                return JsonSerializer.Serialize(values, SerializerOptions);
-            },
-            static json => DeserializeParticipants(json));
+            ids => ids == null ? JsonSerializer.Serialize(Array.Empty<Guid>(), SerializerOptions) : JsonSerializer.Serialize(ids.Select(id => id.Value), SerializerOptions),
+            json => DeserializeParticipants(json));
 
     /// <summary>
     /// Gets the comparer required for EF Core change tracking when using JSON serialized collections.
@@ -51,29 +48,11 @@ internal static class ValueObjectConverters
     public static readonly ValueComparer<List<PlayerId>> PlayerIdCollectionComparer =
         new(
             (left, right) =>
-            {
-                if (ReferenceEquals(left, right))
-                {
-                    return true;
-                }
-
-                if (left is null || right is null)
-                {
-                    return false;
-                }
-
-                return left.SequenceEqual(right);
-            },
-            ids =>
-            {
-                if (ids is null)
-                {
-                    return 0;
-                }
-
-                return ids.Aggregate(0, (hash, id) => HashCode.Combine(hash, id));
-            },
-            ids => ids is null ? new List<PlayerId>() : ids.ToList());
+                left == right ||
+                (!(left == null) && !(right == null) && left.SequenceEqual(right)),
+            ids => ids == null ? 0 : ids.Aggregate(0, (hash, id) => HashCode.Combine(hash, id)),
+            ids => ids == null ? new List<PlayerId>() : ids.ToList()
+        );
 
     private static List<PlayerId> DeserializeParticipants(string? json)
     {

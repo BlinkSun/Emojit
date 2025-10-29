@@ -105,7 +105,15 @@ public sealed class CorsOptions
 
             string normalized = method.Trim().ToUpperInvariant();
 
-            if (!HttpMethods.IsMethod(normalized))
+            if (!(HttpMethods.IsGet(normalized) ||
+                  HttpMethods.IsPost(normalized) ||
+                  HttpMethods.IsPut(normalized) ||
+                  HttpMethods.IsDelete(normalized) ||
+                  HttpMethods.IsOptions(normalized) ||
+                  HttpMethods.IsHead(normalized) ||
+                  HttpMethods.IsPatch(normalized) ||
+                  HttpMethods.IsTrace(normalized) ||
+                  HttpMethods.IsConnect(normalized)))
             {
                 throw new InvalidOperationException($"The HTTP method '{method}' is not valid.");
             }

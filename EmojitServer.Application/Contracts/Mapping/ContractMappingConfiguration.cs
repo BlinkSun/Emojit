@@ -77,7 +77,7 @@ public static class ContractMappingConfiguration
                 .Map(dest => dest.ResolutionDurationMilliseconds, src => src.Attempt.Resolution.ResolutionDuration.HasValue
                     ? src.Attempt.Resolution.ResolutionDuration.Value.TotalMilliseconds
                     : (double?)null)
-                .Map(dest => dest.Scores, src => src.Attempt.ScoreSnapshot is null
+                .Map(dest => dest.Scores, src => src.Attempt.ScoreSnapshot == null
                     ? null
                     : ConvertScores(src.Attempt.ScoreSnapshot.Scores))
                 .Map(dest => dest.GameCompleted, src => src.Attempt.GameCompleted);
