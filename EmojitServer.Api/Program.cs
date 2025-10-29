@@ -1,3 +1,4 @@
+using EmojitServer.Api.Hubs;
 using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
@@ -71,5 +72,6 @@ internal static class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<GameHub>("/hubs/game");
     }
 }

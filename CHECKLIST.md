@@ -75,18 +75,18 @@
   - [x] HealthController
 
 ## ✅ Étape 6 — SignalR Hub (temps réel)
-- [ ] Créer GameHub
-- [ ] Méthodes :
-  - [ ] CreateGame
-  - [ ] JoinGame
-  - [ ] StartGame
-  - [ ] ClickSymbol
-- [ ] Groups par gameId
-- [ ] Broadcast :
-  - [ ] RoundStart
-  - [ ] RoundResult
-  - [ ] GameOver
-- [ ] Gestion erreurs/logs
+- [x] Créer GameHub
+- [x] Méthodes :
+  - [x] CreateGame
+  - [x] JoinGame
+  - [x] StartGame
+  - [x] ClickSymbol
+- [x] Groups par gameId
+- [x] Broadcast :
+  - [x] RoundStart
+  - [x] RoundResult
+  - [x] GameOver
+- [x] Gestion erreurs/logs
 
 ## ✅ Étape 7 — Contracts (DTOs / messages)
 - [ ] Créer Contracts/DTOs :
