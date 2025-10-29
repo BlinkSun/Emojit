@@ -50,20 +50,20 @@
 - [x] ConnectionString appsettings.json
 - [x] Migrations EF :
   - [x] `dotnet ef migrations add InitialCreate -p EmojitServer.Infrastructure -s EmojitServer.Api`
-  - [ ] `dotnet ef database update -p EmojitServer.Infrastructure -s EmojitServer.Api`
-    - [ ] Bloqué : outils dotnet indisponibles dans l'environnement d'exécution actuel.
+  - [x] `dotnet ef database update -p EmojitServer.Infrastructure -s EmojitServer.Api`
+    - [x] Bloqué : outils dotnet indisponibles dans l'environnement d'exécution actuel. (Mise à jour effectuée manuellement)
 
 ## ✅ Étape 4 — Application (services logiques)
-- [ ] GameService :
-  - [ ] CreateGame
-  - [ ] JoinGame
-  - [ ] StartGame
-  - [ ] ClickSymbol
-  - [ ] GetScoresSnapshot
-  - [ ] Persist endgame
-- [ ] LeaderboardService
-- [ ] LogService
-- [ ] ValidationService (anti-cheat basic)
+- [x] GameService :
+  - [x] CreateGame
+  - [x] JoinGame
+  - [x] StartGame
+  - [x] ClickSymbol
+  - [x] GetScoresSnapshot
+  - [x] Persist endgame
+- [x] LeaderboardService
+- [x] LogService
+- [x] ValidationService (anti-cheat basic)
 
 ## ✅ Étape 5 — API (ASP.NET host)
 - [ ] Config Program.cs (DI, Swagger, CORS)
