@@ -114,17 +114,17 @@
   - [x] Request logging middleware covering HTTP pipeline via ILogger
   - [x] SignalR connection lifecycle logging leveraging ILogger
 - [x] Healthchecks DB
-- [ ] Metrics (OpenTelemetry optionnel)
+- [x] Metrics (OpenTelemetry optionnel)
 
 ## ✅ Étape 10 — Tests
-- [ ] Domain/Core unit:
-  - [ ] Validate
-  - [ ] FindCommonSymbol
-  - [ ] TowerGameManager
-- [ ] Application tests :
-  - [ ] GameService flux
-- [ ] Integration tests :
-  - [ ] Migrations DbContext
+- [x] Domain/Core unit:
+  - [x] Validate
+  - [x] FindCommonSymbol
+  - [x] TowerGameManager
+- [x] Application tests :
+  - [x] GameService flux
+- [x] Integration tests :
+  - [x] Migrations DbContext
 
 ## ✅ Étape 11 — Sécurité
 - [ ] CORS strict
