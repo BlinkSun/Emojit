@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EmojitServer.Api.Models;
 using EmojitServer.Application.Abstractions.Services;
+using EmojitServer.Application.Contracts.Leaderboard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Mapster;
 
 namespace EmojitServer.Api.Controllers;
 
@@ -39,10 +39,10 @@ public sealed class LeaderboardController : ControllerBase
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A collection of leaderboard entries.</returns>
     [HttpGet("top")]
-    [ProducesResponseType(typeof(IReadOnlyCollection<LeaderboardEntryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<LeaderboardEntryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IReadOnlyCollection<LeaderboardEntryResponse>>> GetTopAsync(
+    public async Task<ActionResult<IReadOnlyCollection<LeaderboardEntryDto>>> GetTopAsync(
         [FromQuery] int count = 10,
         CancellationToken cancellationToken = default)
     {
@@ -57,16 +57,9 @@ public sealed class LeaderboardController : ControllerBase
                 .GetTopAsync(count, cancellationToken)
                 .ConfigureAwait(false);
 
-            List<LeaderboardEntryResponse> response = entries
-                .Select(entry => new LeaderboardEntryResponse(
-                    entry.PlayerId.Value,
-                    entry.TotalPoints,
-                    entry.GamesPlayed,
-                    entry.GamesWon,
-                    entry.LastUpdatedAtUtc))
-                .ToList();
+            List<LeaderboardEntryDto> response = entries.Adapt<List<LeaderboardEntryDto>>();
 
-            return Ok(response);
+            return Ok(response.AsReadOnly());
         }
         catch (ArgumentOutOfRangeException ex)
         {

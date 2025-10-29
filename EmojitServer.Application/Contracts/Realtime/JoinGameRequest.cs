@@ -1,6 +1,4 @@
-using System;
-
-namespace EmojitServer.Api.Models.Realtime;
+namespace EmojitServer.Application.Contracts.Realtime;
 
 /// <summary>
 /// Represents the payload sent by a client when attempting to join an existing game session.
@@ -8,7 +6,7 @@ namespace EmojitServer.Api.Models.Realtime;
 public sealed class JoinGameRequest
 {
     /// <summary>
-    /// Gets or sets the identifier of the game to join.
+    /// Gets or sets the identifier of the game session to join.
     /// </summary>
     public string GameId { get; set; } = string.Empty;
 

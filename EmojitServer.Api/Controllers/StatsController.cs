@@ -1,9 +1,10 @@
 using System;
-using EmojitServer.Api.Models;
 using EmojitServer.Core.Design;
+using EmojitServer.Application.Contracts.Stats;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Mapster;
 
 namespace EmojitServer.Api.Controllers;
 
@@ -31,17 +32,17 @@ public sealed class StatsController : ControllerBase
     /// <param name="order">The prime number representing the design order.</param>
     /// <returns>A description of the resulting deck layout.</returns>
     [HttpGet("design")]
-    [ProducesResponseType(typeof(DesignStatsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DesignStatsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DesignStatsResponse> GetDesignStats([FromQuery] int order = 7)
+    public ActionResult<DesignStatsDto> GetDesignStats([FromQuery] int order = 7)
     {
         try
         {
             EmojitDesign design = EmojitDesign.Create(order);
             EmojitDesignStats stats = design.GetStats();
 
-            DesignStatsResponse response = new(stats.Order, stats.CardCount, stats.SymbolCount, stats.SymbolsPerCard);
+            DesignStatsDto response = stats.Adapt<DesignStatsDto>();
             return Ok(response);
         }
         catch (ArgumentException ex)

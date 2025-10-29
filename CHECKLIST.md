@@ -89,16 +89,16 @@
 - [x] Gestion erreurs/logs
 
 ## ✅ Étape 7 — Contracts (DTOs / messages)
-- [ ] Créer Contracts/DTOs :
-  - [ ] CreateGameRequest
-  - [ ] JoinGameRequest
-  - [ ] ClickSymbolRequest
-- [ ] Events côté serveur :
-  - [ ] RoundStartEvent
-  - [ ] RoundResultEvent
-  - [ ] GameOverEvent
-- [ ] DTO leaderboard/stats
-- [ ] Mapper automatique (Mapster/AutoMapper)
+- [x] Créer Contracts/DTOs :
+  - [x] CreateGameRequest
+  - [x] JoinGameRequest
+  - [x] ClickSymbolRequest
+- [x] Events côté serveur :
+  - [x] RoundStartEvent
+  - [x] RoundResultEvent
+  - [x] GameOverEvent
+- [x] DTO leaderboard/stats
+- [x] Mapper automatique (Mapster/AutoMapper)
 
 ## ✅ Étape 8 — Config & Settings
 - [ ] appsettings.json :
