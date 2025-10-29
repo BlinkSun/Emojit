@@ -1,5 +1,6 @@
 using EmojitServer.Api.Configuration;
 using EmojitServer.Api.Hubs;
+using EmojitServer.Api.Middleware;
 using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Application.Configuration;
 using EmojitServer.Core.DependencyInjection;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace EmojitServer.Api;
 
@@ -21,6 +23,8 @@ internal static class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         builder.Configuration.AddEnvironmentVariables("EMOJIT_");
+
+        ConfigureLogging(builder);
 
         ConfigureServices(builder.Services, builder.Configuration);
 
@@ -63,6 +67,19 @@ internal static class Program
         services.AddInfrastructureLayer(configuration);
     }
 
+    private static void ConfigureLogging(WebApplicationBuilder builder)
+    {
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+        builder.Logging.AddSimpleConsole(options =>
+        {
+            options.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff zzz ";
+            options.IncludeScopes = true;
+            options.SingleLine = true;
+        });
+        builder.Logging.AddDebug();
+    }
+
     private static void ConfigureMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -76,6 +93,7 @@ internal static class Program
         CorsOptions corsOptions = app.Services.GetRequiredService<IOptions<CorsOptions>>().Value;
 
         app.UseRouting();
+        app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseCors(policy => ConfigureCorsPolicy(policy, corsOptions));
         app.UseAuthorization();
 
