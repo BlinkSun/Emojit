@@ -1,27 +1,75 @@
+using EmojitServer.Application.DependencyInjection;
+using EmojitServer.Core.DependencyInjection;
+using EmojitServer.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+namespace EmojitServer.Api;
 
-builder.Services.AddControllers();
-// TODO: Configure SignalR and API services when implemented.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-WebApplication app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+internal static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    private const string DefaultCorsPolicyName = "EmojitCorsPolicy";
+
+    private static void Main(string[] args)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+        ConfigureServices(builder.Services, builder.Configuration);
+
+        WebApplication app = builder.Build();
+
+        ConfigureMiddleware(app);
+
+        app.Run();
+    }
+
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy(DefaultCorsPolicyName, policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
+        services.AddControllers();
+        services.AddSignalR();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Emojit Server API",
+                Version = "v1",
+                Description = "ASP.NET Core host powering the Emojit multiplayer experience.",
+            });
+        });
+
+        services.AddCoreLayer();
+        services.AddApplicationLayer();
+        services.AddInfrastructureLayer(configuration);
+    }
+
+    private static void ConfigureMiddleware(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+        app.UseCors(DefaultCorsPolicyName);
+        app.UseAuthorization();
+
+        app.MapControllers();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseRouting();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
