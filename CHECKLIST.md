@@ -113,7 +113,7 @@
 - [x] Serilog (ou ILogger)
   - [x] Request logging middleware covering HTTP pipeline via ILogger
   - [x] SignalR connection lifecycle logging leveraging ILogger
-- [ ] Healthchecks DB
+- [x] Healthchecks DB
 - [ ] Metrics (OpenTelemetry optionnel)
 
 ## ✅ Étape 10 — Tests

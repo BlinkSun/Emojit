@@ -5,6 +5,7 @@ using EmojitServer.Application.DependencyInjection;
 using EmojitServer.Application.Configuration;
 using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
+using EmojitServer.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,8 @@ internal static class Program
         services.AddCors();
 
         services.AddControllers();
+        services.AddHealthChecks()
+            .AddDbContextCheck<EmojitDbContext>("database");
         services.AddSignalR();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
@@ -98,6 +101,7 @@ internal static class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHealthChecks("/healthz");
         app.MapHub<GameHub>("/hubs/game");
     }
 
