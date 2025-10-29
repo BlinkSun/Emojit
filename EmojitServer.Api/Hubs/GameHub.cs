@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using EmojitServer.Application.Abstractions.Services;
@@ -9,16 +11,19 @@ using EmojitServer.Core.GameModes;
 using EmojitServer.Domain.Entities;
 using EmojitServer.Domain.Enums;
 using EmojitServer.Domain.ValueObjects;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Mapster;
-using Microsoft.AspNetCore.Http;
 
 namespace EmojitServer.Api.Hubs;
 
 /// <summary>
 /// Provides real-time orchestration and notifications for Emojit game sessions.
 /// </summary>
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public sealed class GameHub : Hub
 {
     private const string GroupPrefix = "game:";
@@ -83,6 +88,7 @@ public sealed class GameHub : Hub
             throw new HubException("A creation payload must be provided.");
         }
 
+        PlayerId authenticatedPlayerId = ResolveAuthenticatedPlayerId();
         CancellationToken cancellationToken = Context.ConnectionAborted;
 
         try
@@ -92,8 +98,9 @@ public sealed class GameHub : Hub
                 .ConfigureAwait(false);
 
             _logger.LogInformation(
-                "Game {GameId} created by connection {ConnectionId} in mode {Mode}.",
+                "Game {GameId} created by player {PlayerId} via connection {ConnectionId} in mode {Mode}.",
                 session.Id,
+                authenticatedPlayerId,
                 Context.ConnectionId,
                 session.Mode);
 
@@ -129,17 +136,18 @@ public sealed class GameHub : Hub
 
         GameId gameId = ParseGameId(request.GameId);
         PlayerId playerId = ParsePlayerId(request.PlayerId);
+        PlayerId authenticatedPlayerId = EnsureAuthenticatedPlayerMatches(playerId);
         string groupName = GetGroupName(gameId);
         CancellationToken cancellationToken = Context.ConnectionAborted;
 
         try
         {
-            await _gameService.JoinGameAsync(gameId, playerId, cancellationToken).ConfigureAwait(false);
+            await _gameService.JoinGameAsync(gameId, authenticatedPlayerId, cancellationToken).ConfigureAwait(false);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName).ConfigureAwait(false);
 
             _logger.LogInformation(
                 "Player {PlayerId} joined game {GameId} via connection {ConnectionId}.",
-                playerId,
+                authenticatedPlayerId,
                 gameId,
                 Context.ConnectionId);
         }
@@ -150,12 +158,12 @@ public sealed class GameHub : Hub
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Business validation failed while player {PlayerId} attempted to join game {GameId}.", playerId, gameId);
+            _logger.LogWarning(ex, "Business validation failed while player {PlayerId} attempted to join game {GameId}.", authenticatedPlayerId, gameId);
             throw new HubException(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while player {PlayerId} attempted to join game {GameId}.", playerId, gameId);
+            _logger.LogError(ex, "Unexpected error while player {PlayerId} attempted to join game {GameId}.", authenticatedPlayerId, gameId);
             throw new HubException("An unexpected error occurred while joining the game.");
         }
     }
@@ -168,6 +176,7 @@ public sealed class GameHub : Hub
     public async Task<RoundStartEvent> StartGame(string gameId)
     {
         GameId parsedGameId = ParseGameId(gameId);
+        PlayerId authenticatedPlayerId = ResolveAuthenticatedPlayerId();
         string groupName = GetGroupName(parsedGameId);
         CancellationToken cancellationToken = Context.ConnectionAborted;
 
@@ -183,7 +192,11 @@ public sealed class GameHub : Hub
 
             await Clients.Group(groupName).SendAsync("RoundStart", startEvent).ConfigureAwait(false);
 
-            _logger.LogInformation("Game {GameId} started by connection {ConnectionId}.", parsedGameId, Context.ConnectionId);
+            _logger.LogInformation(
+                "Game {GameId} started by player {PlayerId} via connection {ConnectionId}.",
+                parsedGameId,
+                authenticatedPlayerId,
+                Context.ConnectionId);
 
             return startEvent;
         }
@@ -218,13 +231,14 @@ public sealed class GameHub : Hub
 
         GameId gameId = ParseGameId(request.GameId);
         PlayerId playerId = ParsePlayerId(request.PlayerId);
+        PlayerId authenticatedPlayerId = EnsureAuthenticatedPlayerMatches(playerId);
         string groupName = GetGroupName(gameId);
         CancellationToken cancellationToken = Context.ConnectionAborted;
 
         try
         {
             GameAttemptResult result = await _gameService
-                .ClickSymbolAsync(gameId, playerId, request.SymbolId, cancellationToken)
+                .ClickSymbolAsync(gameId, authenticatedPlayerId, request.SymbolId, cancellationToken)
                 .ConfigureAwait(false);
 
             RoundResultEvent resultEvent = (gameId, result).Adapt<RoundResultEvent>();
@@ -243,7 +257,7 @@ public sealed class GameHub : Hub
 
             _logger.LogInformation(
                 "Processed attempt for player {PlayerId} in game {GameId}. Accepted={Accepted}, Resolved={Resolved}.",
-                playerId,
+                authenticatedPlayerId,
                 gameId,
                 result.Resolution.AttemptAccepted,
                 result.Resolution.RoundResolved);
@@ -257,14 +271,51 @@ public sealed class GameHub : Hub
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Business validation failed for player {PlayerId} in game {GameId}.", playerId, gameId);
+            _logger.LogWarning(ex, "Business validation failed for player {PlayerId} in game {GameId}.", authenticatedPlayerId, gameId);
             throw new HubException(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while processing attempt for player {PlayerId} in game {GameId}.", playerId, gameId);
+            _logger.LogError(ex, "Unexpected error while processing attempt for player {PlayerId} in game {GameId}.", authenticatedPlayerId, gameId);
             throw new HubException("An unexpected error occurred while processing the attempt.");
         }
+    }
+
+    private PlayerId EnsureAuthenticatedPlayerMatches(PlayerId requestedPlayerId)
+    {
+        PlayerId authenticatedPlayerId = ResolveAuthenticatedPlayerId();
+
+        if (authenticatedPlayerId != requestedPlayerId)
+        {
+            _logger.LogWarning(
+                "Connection {ConnectionId} attempted to act as player {RequestedPlayerId} while authenticated as {AuthenticatedPlayerId}.",
+                Context.ConnectionId,
+                requestedPlayerId,
+                authenticatedPlayerId);
+
+            throw new HubException("The authenticated player does not match the provided identifier.");
+        }
+
+        return authenticatedPlayerId;
+    }
+
+    private PlayerId ResolveAuthenticatedPlayerId()
+    {
+        ClaimsPrincipal? principal = Context.User;
+        string? claimValue = principal?.FindFirst("playerId")?.Value
+            ?? principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+            ?? principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (Guid.TryParse(claimValue, out Guid parsed) && PlayerId.TryFromGuid(parsed, out PlayerId playerId))
+        {
+            return playerId;
+        }
+
+        _logger.LogWarning(
+            "Connection {ConnectionId} does not carry a valid player identity.",
+            Context.ConnectionId);
+
+        throw new HubException("The connection is not associated with a valid player identity.");
     }
 
     private static GameId ParseGameId(string? gameId)

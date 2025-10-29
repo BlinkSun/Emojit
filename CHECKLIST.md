@@ -131,7 +131,10 @@
   - [x] Validation stricte des origines, méthodes et en-têtes autorisés
 - [x] Limiter taille messages SignalR
 - [x] Rate limiting
-- [ ] (Future) JWT Auth
+- [x] (Future) JWT Auth
+  - [x] Configurer l'authentification JWT (API & SignalR)
+  - [x] Exposer un endpoint d'émission de jeton
+  - [x] Sécuriser les interactions hub avec l'identité authentifiée
 
 ## ✅ Étape 12 — Déploiement local
 - [ ] `dotnet run --project EmojitServer.Api`
