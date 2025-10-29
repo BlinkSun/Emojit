@@ -66,13 +66,13 @@
 - [x] ValidationService (anti-cheat basic)
 
 ## ✅ Étape 5 — API (ASP.NET host)
-- [ ] Config Program.cs (DI, Swagger, CORS)
-- [ ] Ajouter services Application/Infrastructure/Core
-- [ ] Ajouter SignalR
-- [ ] REST Endpoints optionnels :
-  - [ ] LeaderboardController
-  - [ ] StatsController
-  - [ ] HealthController
+- [x] Config Program.cs (DI, Swagger, CORS)
+- [x] Ajouter services Application/Infrastructure/Core
+- [x] Ajouter SignalR
+- [x] REST Endpoints optionnels :
+  - [x] LeaderboardController
+  - [x] StatsController
+  - [x] HealthController
 
 ## ✅ Étape 6 — SignalR Hub (temps réel)
 - [ ] Créer GameHub

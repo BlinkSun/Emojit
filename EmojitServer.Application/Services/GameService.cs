@@ -31,8 +31,8 @@ public sealed class GameService : IGameService
     private readonly ILeaderboardService _leaderboardService;
     private readonly ILogger<GameService> _logger;
 
-    private readonly ConcurrentDictionary<GameId, ActiveGameRuntime> _activeGames = new();
-    private readonly ConcurrentDictionary<GameId, SemaphoreSlim> _sessionLocks = new();
+    private static readonly ConcurrentDictionary<GameId, ActiveGameRuntime> _activeGames = new();
+    private static readonly ConcurrentDictionary<GameId, SemaphoreSlim> _sessionLocks = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GameService"/> class.
