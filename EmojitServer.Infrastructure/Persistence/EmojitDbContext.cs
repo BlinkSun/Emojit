@@ -1,4 +1,5 @@
 using EmojitServer.Domain.Entities;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmojitServer.Infrastructure.Persistence;
@@ -41,5 +42,7 @@ public sealed class EmojitDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }
