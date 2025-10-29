@@ -8,6 +8,7 @@ using EmojitServer.Core.DependencyInjection;
 using EmojitServer.Infrastructure.DependencyInjection;
 using EmojitServer.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,11 +50,23 @@ internal static class Program
             .PostConfigure(options => options.Validate())
             .ValidateOnStart();
 
+        services.AddOptions<SignalRMessageOptions>()
+            .Bind(configuration.GetSection(SignalRMessageOptions.SectionName))
+            .PostConfigure(options => options.Validate())
+            .ValidateOnStart();
+
         services.AddCors();
 
         services.AddControllers();
         services.AddHealthChecks()
             .AddDbContextCheck<EmojitDbContext>("database");
+
+        services.AddOptions<HubOptions>()
+            .PostConfigure<SignalRMessageOptions>((hubOptions, messageOptions) =>
+            {
+                hubOptions.MaximumReceiveMessageSize = messageOptions.MaximumReceiveMessageSizeInBytes;
+            });
+
         services.AddSignalR();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
