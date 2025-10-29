@@ -1,3 +1,4 @@
+using System;
 using EmojitServer.Api.Configuration;
 using EmojitServer.Api.Hubs;
 using EmojitServer.Api.Middleware;
@@ -107,22 +108,21 @@ internal static class Program
 
     private static void ConfigureCorsPolicy(CorsPolicyBuilder policyBuilder, CorsOptions corsOptions)
     {
-        if (corsOptions.AllowedOrigins.Count == 0)
+        ArgumentNullException.ThrowIfNull(policyBuilder);
+        ArgumentNullException.ThrowIfNull(corsOptions);
+
+        policyBuilder
+            .WithOrigins(corsOptions.AllowedOrigins.ToArray())
+            .WithMethods(corsOptions.AllowedMethods.ToArray())
+            .WithHeaders(corsOptions.AllowedHeaders.ToArray());
+
+        if (corsOptions.AllowCredentials)
         {
-            policyBuilder.AllowAnyOrigin();
+            policyBuilder.AllowCredentials();
         }
         else
         {
-            policyBuilder.WithOrigins(corsOptions.AllowedOrigins.ToArray());
-        }
-
-        policyBuilder
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-
-        if (corsOptions.AllowCredentials && corsOptions.AllowedOrigins.Count > 0)
-        {
-            policyBuilder.AllowCredentials();
+            policyBuilder.DisallowCredentials();
         }
     }
 }

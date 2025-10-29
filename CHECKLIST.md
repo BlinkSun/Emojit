@@ -127,7 +127,8 @@
   - [x] Migrations DbContext
 
 ## ✅ Étape 11 — Sécurité
-- [ ] CORS strict
+- [x] CORS strict
+  - [x] Validation stricte des origines, méthodes et en-têtes autorisés
 - [ ] Limiter taille messages SignalR
 - [ ] Rate limiting
 - [ ] (Future) JWT Auth
