@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EmojitClient.Maui.Views.PlaySoloPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
+             xmlns:controls="clr-namespace:EmojitClient.Maui.Framework.Controls"
+             xmlns:converters="clr-namespace:EmojitClient.Maui.Framework.Converters"
+             xmlns:models="clr-namespace:EmojitClient.Maui.Models"
+             xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
+             Title="Spot It! - Solo"
+             x:DataType="viewModels:PlaySoloViewModel"
+             BackgroundColor="{DynamicResource ColorPrimary}">
+    <ContentPage.Resources>
+        <converters:SymbolToViewConverter x:Key="SymbolToViewConverter" />
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <behaviors:AnimatedPageBehavior />
+    </ContentPage.Behaviors>
+
+    <Grid>
+        <!--  🖼️ Fond  -->
+        <Image Grid.RowSpan="3"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               Opacity="0.7"
+               Source="game_background.png"
+               VerticalOptions="Fill"
+               ZIndex="0" />
+
+        <Grid Padding="15"
+              RowDefinitions="Auto,*,*"
+              RowSpacing="15">
+
+            <!--  🧠 Bande de stats en haut  -->
+            <Border x:Name="ScoreBoard"
+                    Margin="0,10,0,5"
+                    Padding="10,8"
+                    Background="#222222AA"
+                    HorizontalOptions="Fill"
+                    Shadow="{OnPlatform Default={x:Null}, Android={x:Null}}"
+                    Stroke="{DynamicResource ColorAccent}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="2">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                    <Label FontFamily="BalooBold"
+                           FontSize="20"
+                           Text="{Binding Score, StringFormat='⭐ Score: {0}'}"
+                           TextColor="White" />
+                    <Label FontFamily="BalooBold"
+                           FontSize="20"
+                           Text="{Binding CurrentRound, StringFormat='🎯 {0}/10'}"
+                           TextColor="White" />
+                    <Label FontFamily="BalooBold"
+                           FontSize="20"
+                           Text="{Binding TimeLeft, StringFormat='⏱ {0}s'}"
+                           TextColor="{DynamicResource ColorDanger}" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <!--  🃏 Carte du Tas (en haut)  #00000020  -->
+            <Border Grid.Row="1"
+                    Background="#AAAAFFFF"
+                    HorizontalOptions="Center"
+                    StrokeShape="RoundRectangle 180"
+                    Style="{StaticResource CardBorderStyle}"
+                    VerticalOptions="Center">
+                <!--<controls:CircularItemsLayout x:Name="StackCollection"
+                                              AutoRotateSpeed="0.015"
+                                              HasCentralItem="True"
+                                              IsAutoRotateEnabled="True"
+                                              IsRandomItemRotationEnabled="True"
+                                              IsRandomItemScaleEnabled="True"
+                                              ItemsSource="{Binding StackSymbols}"
+                                              StartAngle="-1.5708">
+                    <controls:CircularItemsLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:EmojItSymbol">
+                            <Image Aspect="AspectFit"
+                                   HeightRequest="80"
+                                   Source="{Binding Image}"
+                                   ToolTipProperties.Text="{Binding Label}"
+                                   WidthRequest="80" />
+                        </DataTemplate>
+                    </controls:CircularItemsLayout.ItemTemplate>
+                </controls:CircularItemsLayout>-->
+                <controls:CircularItemsLayout x:Name="StackCollection"
+                                              AutoRotateSpeed="0.015"
+                                              HasCentralItem="True"
+                                              IsAutoRotateEnabled="False"
+                                              IsRandomItemRotationEnabled="False"
+                                              IsRandomItemScaleEnabled="False"
+                                              ItemTappedCommand="{Binding EmojiTappedCommand}"
+                                              ItemsSource="{Binding EmojiList}">
+                    <controls:CircularItemsLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Grid>
+                                <Label FontSize="56"
+                                       HorizontalOptions="Center"
+                                       Text="{Binding .}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </controls:CircularItemsLayout.ItemTemplate>
+                </controls:CircularItemsLayout>
+            </Border>
+
+            <!--  🙋 Carte du joueur (en bas)  -->
+            <Border Grid.Row="2"
+                    Background="#AAAAFFFF"
+                    HorizontalOptions="Center"
+                    StrokeShape="RoundRectangle 180"
+                    Style="{StaticResource CardBorderStyle}"
+                    VerticalOptions="Center">
+                <controls:CircularItemsLayout x:Name="PlayerCollection"
+                                              AutoRotateSpeed="0.015"
+                                              HasCentralItem="True"
+                                              IsAutoRotateEnabled="True"
+                                              IsRandomItemRotationEnabled="True"
+                                              IsRandomItemScaleEnabled="True"
+                                              ItemTappedCommand="{Binding SelectSymbolCommand}"
+                                              ItemsSource="{Binding PlayerSymbols}"
+                                              StartAngle="-1.5708">
+                    <controls:CircularItemsLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:EmojItSymbol">
+                            <Image Aspect="AspectFit"
+                                   HeightRequest="80"
+                                   Source="{Binding Image}"
+                                   ToolTipProperties.Text="{Binding Label}"
+                                   WidthRequest="80" />
+                        </DataTemplate>
+                    </controls:CircularItemsLayout.ItemTemplate>
+                </controls:CircularItemsLayout>
+            </Border>
+
+        </Grid>
+    </Grid>
+</ContentPage>

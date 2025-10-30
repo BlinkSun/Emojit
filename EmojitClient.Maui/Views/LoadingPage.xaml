@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EmojitClient.Maui.Views.LoadingPage" Title="Spot It! - Chargement"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
+             xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
+             x:DataType="viewModels:LoadingViewModel"
+             BackgroundColor="{DynamicResource ColorPrimary}">
+
+    <ContentPage.Behaviors>
+        <behaviors:AnimatedPageBehavior />
+    </ContentPage.Behaviors>
+
+    <VerticalStackLayout HorizontalOptions="Center"
+                         Spacing="20"
+                         VerticalOptions="Center">
+        <Image x:Name="LogoImage"
+               Aspect="AspectFit"
+               HeightRequest="160"
+               HorizontalOptions="Center"
+               Source="spot_it.png"
+               VerticalOptions="Center"
+               WidthRequest="160" />
+        <ActivityIndicator IsRunning="True" Color="#00BFFF" />
+        <Label x:Name="StatusLabel"
+               FontSize="16"
+               HorizontalOptions="Center"
+               Text="Chargement..."
+               TextColor="White" />
+    </VerticalStackLayout>
+
+</ContentPage>

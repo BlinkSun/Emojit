@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EmojitClient.Maui.Views.ConfigSoloPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
+             xmlns:enums="clr-namespace:EmojitClient.Maui.Enums"
+             xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
+             Title="Choix de la difficulté"
+             x:DataType="viewModels:ConfigSoloViewModel"
+             BackgroundColor="{DynamicResource ColorPrimary}">
+
+    <ContentPage.Behaviors>
+        <behaviors:AnimatedPageBehavior />
+    </ContentPage.Behaviors>
+
+    <Grid>
+        <!--  🖼️ Fond  -->
+        <Image Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               Opacity="0.7"
+               Source="game_background.png"
+               VerticalOptions="Fill"
+               ZIndex="0" />
+
+        <!--  🎮 Contenu  -->
+        <ScrollView ZIndex="1">
+            <VerticalStackLayout x:Name="MainContainer"
+                                 Padding="30,60"
+                                 HorizontalOptions="Fill"
+                                 Spacing="80"
+                                 VerticalOptions="Fill">
+
+                <!--  🧩 Titre  -->
+                <Label x:Name="TitleLabel"
+                       Style="{StaticResource TitleLabelStyle}"
+                       Text="Choisis ta difficulté" />
+
+                <!--  🟢 Boutons de difficulté  -->
+                <VerticalStackLayout x:Name="DifficultyButtons"
+                                     HorizontalOptions="Center"
+                                     Spacing="40"
+                                     VerticalOptions="Center"
+                                     WidthRequest="250">
+
+                    <Button BackgroundColor="{DynamicResource ColorSuccess}"
+                            Command="{Binding SelectDifficultyCommand}"
+                            CommandParameter="{x:Static enums:DifficultyLevel.Easy}"
+                            Text="😎 Facile" />
+
+                    <Button BackgroundColor="{DynamicResource ColorAccent}"
+                            Command="{Binding SelectDifficultyCommand}"
+                            CommandParameter="{x:Static enums:DifficultyLevel.Normal}"
+                            Text="🤓 Normal" />
+
+                    <Button BackgroundColor="{DynamicResource ColorDanger}"
+                            Command="{Binding SelectDifficultyCommand}"
+                            CommandParameter="{x:Static enums:DifficultyLevel.Hard}"
+                            Text="🔥 Difficile" />
+                </VerticalStackLayout>
+
+                <!--  👣 Retour  -->
+                <Button x:Name="BackButton"
+                        BackgroundColor="{DynamicResource ColorDisabled}"
+                        Command="{Binding GoBackCommand}"
+                        FontSize="24"
+                        Text="⬅️ Retour au menu" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

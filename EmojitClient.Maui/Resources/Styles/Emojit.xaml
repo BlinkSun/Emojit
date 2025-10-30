@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!--  🎨 Couleurs  -->
+    <Color x:Key="ColorPrimary">#3B82F6</Color>
+    <Color x:Key="ColorAccent">#FFC107</Color>
+    <Color x:Key="ColorSuccess">#34D058</Color>
+    <Color x:Key="ColorDanger">#FF4B4B</Color>
+    <Color x:Key="ColorDisabled">#808080</Color>
+    <Color x:Key="ColorBackground">#101010</Color>
+
+    <!--  🔤 Fonts  -->
+    <Style TargetType="Label">
+        <Setter Property="FontFamily" Value="BalooRegular" />
+        <Setter Property="TextColor" Value="White" />
+    </Style>
+
+    <Style x:Key="TitleLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontFamily" Value="BalooBold" />
+        <Setter Property="TextColor" Value="{StaticResource ColorAccent}" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="InfoLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="TextColor" Value="#CCCCCC" />
+    </Style>
+
+    <!--  🟢 Boutons  -->
+    <Style TargetType="Button">
+        <Setter Property="FontFamily" Value="BalooBold" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="15,10" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="BackgroundColor" Value="{StaticResource ColorSuccess}" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="Black"
+                        Opacity="0.3"
+                        Radius="8" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Bouton désactivé  -->
+    <Style x:Key="DisabledButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource ColorDisabled}" />
+        <Setter Property="Opacity" Value="0.7" />
+    </Style>
+
+    <!--  🟦 Cadres des cartes  -->
+    <Style x:Key="CardBorderStyle" TargetType="Border">
+        <!--  Coins arrondis  -->
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="20" />
+            </Setter.Value>
+        </Setter>
+
+        <!--  Contour  -->
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Stroke" Value="#333" />
+
+        <!--  Arrière-plan  -->
+        <Setter Property="Background" Value="#1A1A1A" />
+
+        <!--  Marges internes et externes  -->
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Margin" Value="5" />
+
+        <!--  Ombre douce  -->
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="Black"
+                        Opacity="0.3"
+                        Radius="8" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

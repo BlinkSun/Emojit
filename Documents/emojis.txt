@@ -1,0 +1,36 @@
+Cat
+
+Travels and Places (1, x57):
+place-building
+place-geographic
+place-map
+place-other
+place-religious
+
+Travels And Place (2, x114, à diviser en 2 si possible)
+sky & weather
+transport-air
+transport-ground
+transport-water
+
+Activities (1, x66, à trier)
+sport
+game
+event
+
+Animals & Nature (1, x114, à diviser en 2 si possible)
+animal-amphibian (1)
+animal-bird (18)
+animal-bug (12)
+animal-mammal (61)
+animal-marine (14)
+animal-reptile (8)
+
+Flags (1, x259, on vas-tu vraiment l'utiliser)
+country-flag (259)
+
+
+
+
+
+$/NovoClinic/NovoClinic-Test/

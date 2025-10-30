@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EmojitClient.Maui.Views.StatsSoloPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
+             xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
+             Title="Résultats"
+             x:DataType="viewModels:StatsSoloViewModel"
+             BackgroundColor="{DynamicResource ColorPrimary}"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.Behaviors>
+        <behaviors:AnimatedPageBehavior />
+    </ContentPage.Behaviors>
+
+    <Grid>
+        <!--  🖼️ Fond  -->
+        <Image Grid.RowSpan="3"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               Opacity="0.7"
+               Source="game_background.png"
+               VerticalOptions="Fill"
+               ZIndex="0" />
+
+        <Grid Padding="25"
+              RowDefinitions="*,Auto"
+              RowSpacing="20">
+
+            <!--  🎉 Résumé du score  -->
+            <VerticalStackLayout x:Name="ScoreBoard"
+                                 HorizontalOptions="Center"
+                                 Spacing="25"
+                                 VerticalOptions="Center"
+                                 ZIndex="1">
+
+                <Label FontFamily="BalooBold"
+                       FontSize="34"
+                       HorizontalOptions="Center"
+                       Text="🎯 Partie terminée !"
+                       TextColor="Gold" />
+
+                <Border Padding="25,30"
+                        Background="#00000055"
+                        Style="{StaticResource CardBorderStyle}"
+                        WidthRequest="300">
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="15">
+
+                        <Label FontFamily="BalooRegular"
+                               FontSize="20"
+                               HorizontalOptions="Center"
+                               Text="{Binding Difficulty, StringFormat='🏆 Difficulté : {0}'}"
+                               TextColor="White" />
+
+                        <Label FontFamily="BalooRegular"
+                               FontSize="20"
+                               HorizontalOptions="Center"
+                               Text="{Binding Rounds, StringFormat='🎮 Rounds joués : {0}/10'}"
+                               TextColor="White" />
+
+                        <Label FontFamily="BalooBold"
+                               FontSize="26"
+                               HorizontalOptions="Center"
+                               Text="{Binding Score, StringFormat='⭐ Score : {0} points'}"
+                               TextColor="Lime" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Margin="0,10,0,0"
+                       FontFamily="BalooRegular"
+                       FontSize="18"
+                       HorizontalOptions="Center"
+                       Opacity="0.85"
+                       Text="Bravo pour cette partie ! 😎"
+                       TextColor="White" />
+
+            </VerticalStackLayout>
+
+            <!--  🔘 Boutons d’action  -->
+            <VerticalStackLayout x:Name="BackButtons"
+                                 Grid.Row="1"
+                                 Margin="0,0,0,30"
+                                 HorizontalOptions="Center"
+                                 Spacing="20"
+                                 VerticalOptions="End"
+                                 ZIndex="1">
+
+                <Button BackgroundColor="#333333"
+                        Command="{Binding ReturnMenuCommand}"
+                        CornerRadius="14"
+                        FontFamily="BalooRegular"
+                        HeightRequest="55"
+                        Text="↩️ Menu principal"
+                        TextColor="White"
+                        WidthRequest="180" />
+
+                <Button BackgroundColor="{DynamicResource ColorSuccess}"
+                        Command="{Binding ReplayCommand}"
+                        CornerRadius="14"
+                        FontFamily="BalooRegular"
+                        HeightRequest="55"
+                        Text="🔁 Réessayer"
+                        TextColor="White"
+                        WidthRequest="180" />
+            </VerticalStackLayout>
+
+        </Grid>
+    </Grid>
+</ContentPage>
