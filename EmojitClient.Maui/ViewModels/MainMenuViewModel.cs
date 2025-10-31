@@ -57,9 +57,9 @@ public sealed partial class MainMenuViewModel : ViewModelBase
             soundService.PlaySfx("click");
             if (Application.Current?.Windows[0]?.Page is NavigationPage navPage && navPage.CurrentPage is MainMenuPage mainPage)
             {
-                await mainPage.AnimateExitAsync();
-                AnimatedPageBehavior? behavior = mainPage.Behaviors.OfType<AnimatedPageBehavior>().FirstOrDefault();
-                if (behavior != null) await behavior.AnimateExitAsync(mainPage);
+                //await mainPage.AnimateExitAsync();
+                //AnimatedPageBehavior? behavior = mainPage.Behaviors.OfType<AnimatedPageBehavior>().FirstOrDefault();
+                //if (behavior != null) await behavior.AnimateExitAsync(mainPage);
             }
             await Navigation.NavigateToAsync<ConfigSoloViewModel>();
         }

@@ -6,6 +6,7 @@ using EmojitClient.Maui.Framework.Navigation;
 using EmojitClient.Maui.Framework.Services;
 using EmojitClient.Maui.ViewModels;
 using EmojitClient.Maui.Views;
+using Microsoft.Extensions.Logging;
 
 namespace EmojitClient.Maui;
 
@@ -25,7 +26,7 @@ public static class MauiProgram
             });
 
 #if DEBUG
-        //builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
         builder.Services.AddSingleton<IFileProviderService, MauiFileProviderService>();
         builder.Services.AddSingleton<ISoundService, SoundService>();
@@ -33,7 +34,7 @@ public static class MauiProgram
         {
             IFileProviderService fileProvider = provider.GetRequiredService<IFileProviderService>();
             DatabaseService db = new(fileProvider);
-            Task.Run(async () => await db.EnsureDatabaseReadyAsync()); // 🔥 async sans bloquer
+            Task.Run(async () => await db.EnsureDatabaseReadyAsync());
             return new GameDataRepository(db);
         });
 

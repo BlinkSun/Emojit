@@ -1,108 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="EmojitClient.Maui.Views.MainMenuPage"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
-             xmlns:controls="clr-namespace:EmojitClient.Maui.Framework.Controls"
-             xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
-             Title="Spot It! - Menu Principal"
-             x:DataType="viewModels:MainMenuViewModel"
-             BackgroundColor="{DynamicResource ColorPrimary}">
+<pages:BasePage x:Class="EmojitClient.Maui.Views.MainMenuPage" Title="EmojIt!"
+                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:behaviors="clr-namespace:EmojitClient.Maui.Framework.Behaviors"
+                xmlns:controls="clr-namespace:EmojitClient.Maui.Framework.Controls"
+                xmlns:pages="clr-namespace:EmojitClient.Maui.Framework.Base"
+                xmlns:viewModels="clr-namespace:EmojitClient.Maui.ViewModels"
+                x:DataType="viewModels:MainMenuViewModel"
+                BackgroundColor="{DynamicResource ColorPrimary}"
+                IsEmojiBackgroundEnabled="True"
+                IsRadiantRaysEnabled="False">
 
-    <ContentPage.Behaviors>
-        <behaviors:AnimatedPageBehavior />
-    </ContentPage.Behaviors>
+    <!--  🎮 Contenu  -->
+    <ScrollView ZIndex="1">
+        <VerticalStackLayout Margin="20"
+                             HorizontalOptions="Fill"
+                             Spacing="20"
+                             VerticalOptions="Center">
 
-    <Grid>
-        <!--  🎨 Fond  -->
-        <controls:EmojiBackgroundView x:Name="EmojiBg"
-                                      BackgroundColor="CornflowerBlue"
-                                      EmojiCount="30"
-                                      EmojiOpacity="0.2"
-                                      EmojiSpeed="60"
-                                      HorizontalOptions="Fill"
-                                      MaxEmojiSize="128"
-                                      MinEmojiSize="32"
-                                      VerticalOptions="Fill" />
-        <!--<Image Aspect="AspectFill"
-               HorizontalOptions="Fill"
-               Opacity="0.7"
-               Source="game_background.png"
-               VerticalOptions="Fill"
-               ZIndex="0" />-->
-        <controls:RadiantRaysView x:Name="Rays"
-                                  Margin="0,0,0,-45"
-                                  HorizontalOptions="Fill"
-                                  Opacity="0.3"
-                                  RayCount="20"
-                                  RayLengthFactor="1.5"
-                                  RayThickness="80"
-                                  RotationSpeed="30"
-                                  VerticalOptions="Fill" />
-        <controls:ConfettiView x:Name="ConfettiCanvas"
-                               BackgroundColor="Transparent"
-                               ExplosionForce="15"
-                               Gravity="0.25"
-                               HorizontalOptions="Fill"
-                               ParticlesCount="600"
-                               VerticalOptions="Fill" />
+            <!--  🧩 Logo EmojIt  -->
+            <Image x:Name="LogoImage"
+                   Margin="20"
+                   Aspect="AspectFill"
+                   HeightRequest="180"
+                   HorizontalOptions="Center"
+                   Source="emojit.png"
+                   VerticalOptions="Center" />
 
-        <!--  🎮 Contenu  -->
-        <ScrollView ZIndex="1">
-            <VerticalStackLayout Padding="30,60"
-                                 HorizontalOptions="Fill"
-                                 Spacing="40"
+            <!--  🟢 Boutons principaux  -->
+            <VerticalStackLayout x:Name="MainButtons"
+                                 Margin="20"
+                                 HorizontalOptions="Center"
+                                 Spacing="25"
                                  VerticalOptions="Center">
 
-                <!--  🧩 Logo EmojIt  -->
-                <Border x:Name="LogoContainer"
-                        Margin="0,20,0,0"
-                        Background="Transparent"
-                        HeightRequest="180"
-                        HorizontalOptions="Center"
-                        StrokeThickness="0"
-                        WidthRequest="375">
-                    <Image x:Name="LogoImage"
-                           Aspect="AspectFill"
-                           HorizontalOptions="Center"
-                           Source="emojit.png"
-                           VerticalOptions="Center" />
-                </Border>
+                <Button BackgroundColor="{DynamicResource ColorSuccess}"
+                        Command="{Binding PlaySoloCommand}"
+                        Text="🎮 Jouer seul" />
 
-                <!--  🟢 Boutons principaux  -->
-                <VerticalStackLayout x:Name="MainButtons"
-                                     HorizontalOptions="Center"
-                                     Spacing="25"
-                                     VerticalOptions="Center">
+                <Button IsEnabled="False"
+                        Style="{DynamicResource DisabledButtonStyle}"
+                        Text="👫 Jouer avec un ami" />
 
-                    <Button BackgroundColor="{DynamicResource ColorSuccess}"
-                            Command="{Binding PlaySoloCommand}"
-                            Text="🎮 Jouer seul" />
+                <Button IsEnabled="False"
+                        Style="{DynamicResource DisabledButtonStyle}"
+                        Text="🌍 Jouer en ligne (monde)" />
 
-                    <Button IsEnabled="False"
-                            Style="{DynamicResource DisabledButtonStyle}"
-                            Text="👫 Jouer avec un ami" />
-
-                    <Button IsEnabled="False"
-                            Style="{DynamicResource DisabledButtonStyle}"
-                            Text="🌍 Jouer en ligne (monde)" />
-
-                    <Button Clicked="OnExplosionClicked"
+                <!--<Button Clicked="OnExplosionClicked"
                             HorizontalOptions="Center"
                             Text="🎉 Explosion !"
-                            VerticalOptions="End" />
-                </VerticalStackLayout>
-
-                <!--  👣 Pied de page  -->
-                <Label x:Name="FooterLabel"
-                       Margin="0,40,0,20"
-                       FontFamily="BalooRegular"
-                       FontSize="14"
-                       HorizontalOptions="Center"
-                       Opacity="0.6"
-                       Text="© 2025 BlinkSun - EmojIt!"
-                       TextColor="White" />
+                            VerticalOptions="End" />-->
             </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+
+            <!--  👣 Pied de page  -->
+            <Label x:Name="FooterLabel"
+                   Margin="20"
+                   FontFamily="BalooRegular"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   Opacity="0.6"
+                   Text="© 2025 BlinkSun - EmojIt!"
+                   TextColor="White" />
+        </VerticalStackLayout>
+    </ScrollView>
+    <!--</Grid>-->
+</pages:BasePage>

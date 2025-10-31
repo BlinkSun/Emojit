@@ -18,6 +18,7 @@ public partial class AnimatedPageBehavior : Behavior<ContentPage>
         //page.HandlerChanged += OnHandlerChanged;
         //page.NavigatedTo += OnNavigatedTo;
         page.Appearing += OnAppearing;
+        page.Disappearing -= OnDisappearing;
     }
 
     protected override void OnDetachingFrom(ContentPage page)
@@ -27,6 +28,7 @@ public partial class AnimatedPageBehavior : Behavior<ContentPage>
         //page.HandlerChanged -= OnHandlerChanged;
         //page.NavigatedTo -= OnNavigatedTo;
         page.Appearing -= OnAppearing;
+        page.Disappearing -= OnDisappearing;
     }
 
     private void OnHandlerChanged(object? sender, EventArgs e)
@@ -34,7 +36,6 @@ public partial class AnimatedPageBehavior : Behavior<ContentPage>
         if (sender is not ContentPage page) return;
         page.Opacity = 0;
     }
-
     private void OnNavigatedTo(object? sender, NavigatedToEventArgs e)
     {
         if (sender is not ContentPage page) return;
@@ -44,6 +45,18 @@ public partial class AnimatedPageBehavior : Behavior<ContentPage>
     private async void OnAppearing(object? sender, EventArgs e)
     {
         if (sender is not ContentPage page) return;
+        await AnimatedEntranceAsync(page);
+    }
+
+    private async void OnDisappearing(object? sender, EventArgs e)
+    {
+        if (sender is not ContentPage page) return;
+        await AnimateExitAsync(page);
+    }
+
+    private async Task AnimatedEntranceAsync(Page page)
+    {
+        if (page == null) return;
         if (hasAnimatedIn || isAnimating) return;
 
         try

@@ -4,18 +4,28 @@
 
     <!--  Note: For Android please see also Platforms\Android\Resources\values\colors.xml  -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <!-- 🎨 Palette principale Emojit -->
+    <Color x:Key="Primary">#3B82F6</Color>
+    <Color x:Key="PrimaryDark">#2563EB</Color>
+    <Color x:Key="PrimaryDarkText">#FFFFFF</Color>
+    <Color x:Key="Secondary">#FFC107</Color>
+    <Color x:Key="SecondaryDarkText">#1E1E1E</Color>
+    <Color x:Key="Tertiary">#60A5FA</Color>
 
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
+    <!-- ✅ États et statuts -->
+    <Color x:Key="Success">#34D058</Color>
+    <Color x:Key="Danger">#FF4B4B</Color>
+    <Color x:Key="Disabled">#808080</Color>
+
+    <!-- 🧱 Couleurs génériques -->
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="OffBlack">#1F1F1F</Color>
+    <Color x:Key="Background">#F8FAFC</Color>
+    <Color x:Key="TextPrimary">#1E1E1E</Color>
+    <Color x:Key="TextSecondary">#5F5F5F</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>

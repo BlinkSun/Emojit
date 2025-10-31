@@ -15,7 +15,8 @@ public partial class App : Application
         this.mainPage = new NavigationPage(mainPage)
         {
             BarBackgroundColor = Colors.Transparent,
-            BarTextColor = Colors.White
+            BarTextColor = Colors.Transparent,
+            Background = Colors.CornflowerBlue
         };
         NavigationPage.SetHasNavigationBar(this.mainPage, false);
         this.soundService = soundService;
@@ -44,7 +45,7 @@ public partial class App : Application
         Window window = new(mainPage);
 
 #if WINDOWS
-        window.Title = "Spot It!";
+        window.Title = "EmojIt!";
 
         // Dimensions typiques d’un écran mobile en mode portrait
         const int width = 400;
